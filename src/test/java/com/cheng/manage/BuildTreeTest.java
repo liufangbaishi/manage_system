@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author weicheng
@@ -40,7 +39,7 @@ public class BuildTreeTest {
         TreeNode t6 = new TreeNode("6","p22","2");
         TreeNode t7 = new TreeNode("7","p23","2");
         TreeNode t8 = new TreeNode("8","p111","3");
-        TreeNode t9 = new TreeNode("9","p123","3");
+        TreeNode t9 = new TreeNode("9","p113","3");
 
         List<TreeNode> treeList = new ArrayList<>();
         Collections.addAll(treeList, t1,t2,t3,t4,t5,t6,t7,t8,t9);
@@ -49,8 +48,9 @@ public class BuildTreeTest {
     }
 
     private static void pretty(List<TreeNode> treeList) {
-//        System.out.println(toTree01(treeList));
-        System.out.println(toTree02(treeList));
+        System.out.println(toTree01(treeList));
+//        System.out.println(toTree02(treeList));
+//        System.out.println(toTree03(treeList));
     }
 
     /**
@@ -102,6 +102,19 @@ public class BuildTreeTest {
             }
         }
         return parent;
+    }
+
+    /**
+     * 方式三
+     * @param treeNodeList
+     * @return
+     */
+    public static List<TreeNode> toTree03(List<TreeNode> treeNodeList) {
+        Map<String, List<TreeNode>> parentIdMap = treeNodeList.stream().collect(Collectors.groupingBy(TreeNode::getParentId));
+        treeNodeList.forEach(zone -> zone.setChildren(parentIdMap.get(zone.getId())));
+        return treeNodeList.stream()
+                .filter(v -> v.getParentId().equals("0"))
+                .collect(Collectors.toList());
     }
 
 }
