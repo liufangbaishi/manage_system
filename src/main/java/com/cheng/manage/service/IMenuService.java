@@ -1,7 +1,10 @@
 package com.cheng.manage.service;
 
-import com.cheng.manage.model.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cheng.manage.common.Result;
+import com.cheng.manage.model.Menu;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMenuService extends IService<Menu> {
 
+    List<Menu> getMenuList(Menu queryMenu);
+
+    Result addMenu(Menu menu);
 }

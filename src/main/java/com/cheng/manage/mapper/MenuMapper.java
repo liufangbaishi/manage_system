@@ -1,7 +1,9 @@
 package com.cheng.manage.mapper;
 
-import com.cheng.manage.model.Menu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cheng.manage.model.Menu;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface MenuMapper extends BaseMapper<Menu> {
 
+    List<Menu> selectMenuByRoleId(Long roleId);
 }

@@ -25,5 +25,18 @@
     <sql id="Base_Column_List">
         menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark
     </sql>
+    <!-- 根据角色查询菜单权限-->
+    <select id="selectMenuByRoleId" resultMap="BaseResultMap">
+        SELECT
+            m.menu_id,
+            menu_name,
+            parent_id
+        FROM
+            sys_menu m
+        LEFT JOIN sys_role_menu mr ON m.menu_id = mr.menu_id
+        WHERE
+            mr.role_id = #{roleId}
+    </select>
+
 
 </mapper>

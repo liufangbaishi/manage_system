@@ -1,14 +1,15 @@
 package com.cheng.manage.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ public class User implements Serializable {
     private String email;
 
     @ApiModelProperty(value = "手机号码")
-    private String phonenumber;
+    private String phoneNumber;
 
     @ApiModelProperty(value = "用户性别（0男 1女 2未知）")
     private String sex;

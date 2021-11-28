@@ -8,7 +8,7 @@
         <result column="user_name" property="userName" />
         <result column="nick_name" property="nickName" />
         <result column="email" property="email" />
-        <result column="phonenumber" property="phonenumber" />
+        <result column="phone_number" property="phoneNumber" />
         <result column="sex" property="sex" />
         <result column="avatar" property="avatar" />
         <result column="password" property="password" />
@@ -25,7 +25,30 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, remark
+        user_id, user_name, nick_name, email, phone_number, sex, avatar, password, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, remark
     </sql>
+    <select id="getUserList" resultType="com.cheng.manage.model.User">
+        select
+            <include refid="Base_Column_List" />
+        from sys_user
+        <where>
+            del_flag = 0
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and nick_name = #{nickName}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 
 </mapper>
