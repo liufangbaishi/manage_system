@@ -1,6 +1,6 @@
 package com.cheng.manage.utils;
 
-import com.cheng.manage.common.TreeNode;
+import com.cheng.manage.common.consts.TreeNode;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,9 +4,11 @@ import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cheng.manage.common.Result;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
+import com.cheng.manage.mapper.RoleMapper;
 import com.cheng.manage.mapper.UserMapper;
+import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IUserService;
 import com.cheng.manage.vo.TableList;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,6 +34,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Override
     public TableList getUserList(PageParam<User> queryUser) {
@@ -65,5 +71,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setUpdateTime(LocalDateTime.now());
         userMapper.insert(user);
         return Result.success("新增用户成功");
+    }
+
+    @Override
+    public List<Role> getUserRoleList(Long userId) {
+        return roleMapper.selectUserRoleList(userId);
     }
 }

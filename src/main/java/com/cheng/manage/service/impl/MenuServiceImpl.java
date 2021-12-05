@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cheng.manage.common.Result;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.mapper.MenuMapper;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.service.IMenuService;
@@ -41,6 +41,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         List<Menu> menuList = new LambdaQueryChainWrapper<>(menuMapper)
                 .eq(StrUtil.isNotBlank(queryMenu.getMenuName()), Menu::getMenuName, queryMenu.getMenuName())
                 .eq(StrUtil.isNotBlank(queryMenu.getMenuType()), Menu::getMenuType, queryMenu.getMenuType())
+                .orderByAsc(Menu::getOrderNum)
                 .list();
         // 转换为树形结构
         return BuildTree.buildTree(menuList);

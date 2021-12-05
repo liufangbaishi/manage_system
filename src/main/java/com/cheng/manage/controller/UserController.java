@@ -1,9 +1,11 @@
 package com.cheng.manage.controller;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.cheng.manage.common.Result;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
+import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IUserService;
 import com.cheng.manage.vo.TableList;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -50,6 +53,9 @@ public class UserController {
     @ApiOperation(value = "查询用户信息")
     @RequestMapping(value = "getUser/{userId}", method = RequestMethod.GET)
     public Result getUser(@PathVariable Long userId) {
+        if (ObjectUtil.isNull(userId)) {
+            return Result.fail("用户id不能为空");
+        }
         User userById = userService.getById(userId);
         if (Objects.isNull(userById)) {
             return Result.fail("用户不存在");
@@ -61,7 +67,11 @@ public class UserController {
     @ApiOperation(value = "查询用户对应的角色信息")
     @RequestMapping(value = "getUserByRole/{userId}", method = RequestMethod.GET)
     public Result getUserByRole(@PathVariable Long userId) {
-        return null;
+        if (ObjectUtil.isNull(userId)) {
+            return Result.fail("用户id不能为空");
+        }
+        List<Role> roleList = userService.getUserRoleList(userId);
+        return Result.success(roleList);
     }
 
 }

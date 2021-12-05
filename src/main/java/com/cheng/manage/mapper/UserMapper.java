@@ -1,7 +1,7 @@
 package com.cheng.manage.mapper;
 
-import com.cheng.manage.model.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cheng.manage.model.User;
 
 import java.util.List;
 
@@ -15,5 +15,10 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
+    /**
+     * 获取用户列表
+     * @param userParam
+     * @return
+     */
     List<User> getUserList(User userParam);
 }

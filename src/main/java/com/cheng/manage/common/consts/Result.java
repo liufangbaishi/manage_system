@@ -1,4 +1,4 @@
-package com.cheng.manage.common;
+package com.cheng.manage.common.consts;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,5 +39,9 @@ public class Result {
 
     public static Result fail(String message, Object obj) {
         return new Result(ResultCode.FAIL, message, obj);
+    }
+
+    public static Result fail(int code, String message) {
+        return new Result(code, message, null);
     }
 }

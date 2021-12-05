@@ -37,6 +37,19 @@
         WHERE
             mr.role_id = #{roleId}
     </select>
+    <select id="selectUserMenuList" resultType="com.cheng.manage.model.Menu">
+        SELECT DISTINCT
+            m.menu_id,
+            m.menu_name,
+            m.perms
+        FROM
+            sys_menu m
+        LEFT JOIN sys_role_menu mr ON m.menu_id = mr.menu_id
+        LEFT JOIN sys_user_role ur ON ur.role_id = mr.role_id
+        WHERE
+            m.menu_type = 'C' OR m.menu_type = 'F'
+            AND ur.user_id = #{userId}
+    </select>
 
 
 </mapper>

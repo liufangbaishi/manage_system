@@ -1,10 +1,13 @@
 package com.cheng.manage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cheng.manage.common.Result;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
+import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.vo.TableList;
+
+import java.util.List;
 
 /**
  * <p>
@@ -29,4 +32,10 @@ public interface IUserService extends IService<User> {
      * @param user
      */
     Result addUser(User user);
+
+    /**
+     * 通过用户id查询用户的角色列表
+     * @param userId
+     */
+    List<Role> getUserRoleList(Long userId);
 }

@@ -15,5 +15,17 @@ import java.util.List;
  */
 public interface MenuMapper extends BaseMapper<Menu> {
 
+    /**
+     * 根据角色查询角色对应的权限
+     * @param roleId
+     * @return
+     */
     List<Menu> selectMenuByRoleId(Long roleId);
+
+    /**
+     * 根据用户id查询用户的权限
+     * @param userId
+     * @return
+     */
+    List<Menu> selectUserMenuList(Long userId);
 }

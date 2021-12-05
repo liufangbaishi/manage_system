@@ -1,10 +1,12 @@
 package com.cheng.manage.controller;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.cheng.manage.common.Result;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.Role;
+import com.cheng.manage.model.User;
 import com.cheng.manage.service.IRoleService;
 import com.cheng.manage.vo.RoleVo;
 import com.cheng.manage.vo.TableList;
@@ -58,6 +60,9 @@ public class RoleController {
     @ApiOperation(value = "查询角色信息")
     @RequestMapping(value = "getRole/{roleId}", method = RequestMethod.GET)
     public Result getRole(@PathVariable Long roleId) {
+        if (ObjectUtil.isNull(roleId)) {
+            return Result.fail("角色id不能为空");
+        }
         RoleVo roleVo = roleService.getRoleInfo(roleId);
         if (Objects.isNull(roleVo)) {
             return Result.fail("角色不存在");
@@ -69,6 +74,10 @@ public class RoleController {
     @ApiOperation(value = "查询角色对应的用户信息")
     @RequestMapping(value = "getRoleByUser/{roleId}", method = RequestMethod.GET)
     public Result getRoleByUser(@PathVariable Long roleId) {
-        return null;
+        if (ObjectUtil.isNull(roleId)) {
+            return Result.fail("角色id不能为空");
+        }
+        List<User> userList = roleService.getUserByRoleId(roleId);
+        return Result.success(userList);
     }
 }
