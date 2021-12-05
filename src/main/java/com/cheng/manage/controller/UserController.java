@@ -2,7 +2,6 @@ package com.cheng.manage.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.Role;
@@ -11,6 +10,7 @@ import com.cheng.manage.service.IUserService;
 import com.cheng.manage.vo.TableList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,13 +40,7 @@ public class UserController {
 
     @ApiOperation(value = "新增用户")
     @RequestMapping(value = "saveUser", method = RequestMethod.POST)
-    public Result saveUser(@RequestBody User user) {
-        if (StrUtil.isEmpty(user.getUserName())) {
-            return Result.fail("用户名不能为空");
-        }
-        if (StrUtil.isEmpty(user.getNickName())) {
-            return Result.fail("昵称不能为空");
-        }
+    public Result saveUser(@Validated @RequestBody User user) {
         return userService.addUser(user);
     }
 

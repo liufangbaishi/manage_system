@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -32,9 +33,11 @@ public class User implements Serializable {
     private Long userId;
 
     @ApiModelProperty(value = "用户账号")
+    @NotNull(message = "用户名不能为空")
     private String userName;
 
     @ApiModelProperty(value = "用户昵称")
+    @NotNull(message = "昵称不能为空")
     private String nickName;
 
     @ApiModelProperty(value = "用户邮箱")

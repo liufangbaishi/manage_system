@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,9 +36,11 @@ public class Menu extends TreeNode<Menu> implements Serializable {
     private Long menuId;
 
     @ApiModelProperty(value = "菜单名称")
+    @NotNull(message = "菜单名称不能为空")
     private String menuName;
 
     @ApiModelProperty(value = "父菜单ID")
+    @NotNull(message = "上级菜单不能为空")
     private Long parentId;
 
     @ApiModelProperty(value = "显示顺序")

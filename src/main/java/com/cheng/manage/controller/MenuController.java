@@ -1,12 +1,13 @@
 package com.cheng.manage.controller;
 
 
-import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.service.IMenuService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class MenuController {
     private IMenuService menuService;
 
     @ApiOperation(value = "分页查询菜单列表")
+    @PreAuthorize("hasAuthority('sys:menu:list')")
     @RequestMapping(value = "getMenuList", method = RequestMethod.POST)
     public Result getMenuList(@RequestBody Menu queryMenu) {
         List<Menu> menuList = menuService.getMenuList(queryMenu);
@@ -35,10 +37,7 @@ public class MenuController {
 
     @ApiOperation(value = "新增菜单")
     @RequestMapping(value = "saveMenu", method = RequestMethod.POST)
-    public Result saveMenu(@RequestBody Menu menu) {
-        if (StrUtil.isEmpty(menu.getMenuName())) {
-            return Result.fail("菜单名称不能为空");
-        }
+    public Result saveMenu(@Validated @RequestBody Menu menu) {
         return menuService.addMenu(menu);
     }
 

@@ -2,7 +2,6 @@ package com.cheng.manage.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.Role;
@@ -12,6 +11,7 @@ import com.cheng.manage.vo.RoleVo;
 import com.cheng.manage.vo.TableList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,13 +47,7 @@ public class RoleController {
 
     @ApiOperation(value = "新增角色")
     @RequestMapping(value = "saveRole", method = RequestMethod.POST)
-    public Result saveRole(@RequestBody Role role) {
-        if (StrUtil.isEmpty(role.getRoleKey())) {
-            return Result.fail("角色编号不能为空");
-        }
-        if (StrUtil.isEmpty(role.getRoleName())) {
-            return Result.fail("角色名称不能为空");
-        }
+    public Result saveRole(@Validated @RequestBody Role role) {
         return roleService.addRole(role);
     }
 
