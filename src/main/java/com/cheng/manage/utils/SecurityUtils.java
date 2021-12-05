@@ -1,6 +1,7 @@
 package com.cheng.manage.utils;
 
-import com.cheng.manage.model.CurrentUser;
+import cn.hutool.json.JSONUtil;
+import com.cheng.manage.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,12 +19,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityUtils {
 
-    public static CurrentUser getCurrentUser() {
-        return (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    /**
+     * 获取当前登录用户信息
+     * @return
+     */
+    public static User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return JSONUtil.toBean(JSONUtil.toJsonStr(principal), User.class);
     }
 
+    /**
+     * 设置当前用户信息
+     * @param authentication
+     */
     public static void setCurrentUser(Authentication authentication) {
-        log.info(String.valueOf(authentication));
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

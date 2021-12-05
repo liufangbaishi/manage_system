@@ -3,6 +3,8 @@ package com.cheng.manage.service;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.model.User;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author weicheng
  * @version v1.0.0
@@ -30,5 +32,5 @@ public interface IAuthService {
      * @param loginParam
      * @return
      */
-    String login(LoginParam loginParam);
+    String login(LoginParam loginParam, HttpServletRequest request);
 }

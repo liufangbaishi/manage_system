@@ -5,6 +5,7 @@ import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,10 +40,10 @@ public class UserDetailsServiceImpl {
                 throw new UsernameNotFoundException("用户名不存在");
             }
             if ("1".equals(user.getStatus())) {
-                throw new RuntimeException("用户已被禁用");
+                throw new InternalAuthenticationServiceException("用户已被禁用");
             }
             // 如果用户存在，查询用户的权限信息
-            return new CurrentUser(user.getUserName(), user.getPassword(), getAuthority(user.getUserId()));
+            return new CurrentUser(user.getUserId(), user.getUserName(), user.getPassword(), getAuthority(user.getUserId()));
         };
     }
 

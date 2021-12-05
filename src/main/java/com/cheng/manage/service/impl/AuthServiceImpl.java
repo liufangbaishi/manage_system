@@ -14,6 +14,7 @@ import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
+import com.cheng.manage.utils.IpUtils;
 import com.cheng.manage.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -63,7 +66,9 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public User getUserByUserName(String userName) {
-        return userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUserName, userName));
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUserName, userName)
+                .eq(User::getDelFlag, 0));
     }
 
     @Override
@@ -92,7 +97,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public String login(LoginParam loginParam) {
+    public String login(LoginParam loginParam, HttpServletRequest request) {
         // 判断验证码
         // 执行登录方法
         Authentication authentication = null;
@@ -106,9 +111,14 @@ public class AuthServiceImpl implements IAuthService {
             log.info("登录异常", e);
             throw new LoginException(e.getMessage());
         }
-        // 更新最后登录时间,登录地址
-        // 生成token
         CurrentUser userInfo = (CurrentUser) authentication.getPrincipal();
+        // 更新最后登录时间,登录地址
+        User updateUser = new User();
+        updateUser.setUserId(userInfo.getUserId());
+        updateUser.setLoginIp(IpUtils.getIpAddr(request));
+        updateUser.setLoginDate(LocalDateTime.now());
+        userMapper.updateById(updateUser);
+        // 生成token
         return jwtUtils.generateToken(userInfo);
     }
 }

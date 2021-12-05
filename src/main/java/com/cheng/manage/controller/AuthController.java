@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 登录、登出、查询当前登录人的信息(角色、菜单等)
  * @author weicheng
@@ -31,11 +33,11 @@ public class AuthController {
     private String head;
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public Result login(@RequestBody LoginParam loginParam) {
+    public Result login(@RequestBody LoginParam loginParam, HttpServletRequest request) {
         if (StrUtil.isEmpty(loginParam.getUserName()) || StrUtil.isEmpty(loginParam.getPassword())) {
             return Result.fail("用户名或密码不能为空");
         }
-        String token = authService.login(loginParam);
+        String token = authService.login(loginParam, request);
         return Result.success(MapUtil.builder()
                 .put("token", token)
                 .put("head", head)
