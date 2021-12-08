@@ -72,8 +72,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthencationFilter jwtAuthencationFilter;
 
+    @Autowired
+    private SecondValidateFilter secondValidateFilter;
+
     private static final String[] WHITE_URL = {
-            "/auth/login", "/getCaptcha", "/logout"
+            "/auth/login", "/auth/getCaptcha", "/auth/logout"
     };
 
     /**
@@ -98,6 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
                 .and()
-                .addFilterBefore(jwtAuthencationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthencationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(secondValidateFilter, JwtAuthencationFilter.class);
     }
 }

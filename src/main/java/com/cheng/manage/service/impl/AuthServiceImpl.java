@@ -1,9 +1,13 @@
 package com.cheng.manage.service.impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cheng.manage.common.consts.AuthConsts;
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.common.exception.LoginException;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.mapper.MenuMapper;
@@ -16,6 +20,7 @@ import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
 import com.cheng.manage.utils.IpUtils;
 import com.cheng.manage.utils.JwtUtils;
+import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +31,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +69,9 @@ public class AuthServiceImpl implements IAuthService {
      */
     @Resource
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private Producer producer;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -99,6 +111,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public String login(LoginParam loginParam, HttpServletRequest request) {
         // 判断验证码
+        validate(loginParam);
         // 执行登录方法
         Authentication authentication = null;
         try {
@@ -120,5 +133,46 @@ public class AuthServiceImpl implements IAuthService {
         userMapper.updateById(updateUser);
         // 生成token
         return jwtUtils.generateToken(userInfo);
+    }
+    /**
+     * 校验验证码
+     * @param loginParam
+     */
+    private void validate(LoginParam loginParam) {
+        String code = loginParam.getCode();
+        String uuid = loginParam.getUuid();
+        if (StrUtil.isEmpty(code) || StrUtil.isEmpty(uuid)) {
+            throw new LoginException("验证码为空");
+        }
+        Object redisCode = redisTemplate.opsForValue().get(AuthConsts.CAPTCHA_KEY + uuid);
+        if (!code.equals(redisCode)) {
+            throw new LoginException("验证码错误");
+        }
+        redisTemplate.delete(AuthConsts.CAPTCHA_KEY+uuid);
+    }
+
+    /**
+     * 生成验证码
+     * @return
+     */
+    @Override
+    public Result getCaptcha() throws IOException {
+        // 需要生产一个uuid和验证码，一同返回给前端；登录时通过uuid判断验证码
+        String uuid = UUID.randomUUID().toString();
+        // 生成验证码文字
+        String code = producer.createText();
+        log.info("生成的验证码{}", code);
+        // 生成图片验证码转换为Base64
+        BufferedImage imageCode = producer.createImage(code);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(imageCode, "jpg", outputStream);
+        // 写入redis中 120秒
+        redisTemplate.opsForValue().set(AuthConsts.CAPTCHA_KEY+uuid, code, 120, TimeUnit.SECONDS);
+        return Result.success(
+                MapUtil.builder()
+                .put("key", uuid)
+                .put("code", Base64.encode(outputStream.toByteArray()))
+                .build()
+        );
     }
 }

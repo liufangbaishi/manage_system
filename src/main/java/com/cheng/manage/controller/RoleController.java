@@ -11,6 +11,7 @@ import com.cheng.manage.vo.RoleVo;
 import com.cheng.manage.vo.TableList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class RoleController {
     private IRoleService roleService;
 
     @ApiOperation(value = "分页查询角色列表")
+    @PreAuthorize("hasAuthority('sys:role:list')")
     @RequestMapping(value = "getRoleList", method = RequestMethod.POST)
     public Result getRoleList(@RequestBody PageParam<Role> queryRole) {
         TableList roleList = roleService.getRoleList(queryRole);
@@ -46,12 +48,14 @@ public class RoleController {
     }
 
     @ApiOperation(value = "新增角色")
+    @PreAuthorize("hasAuthority('sys:role:add')")
     @RequestMapping(value = "saveRole", method = RequestMethod.POST)
     public Result saveRole(@Validated @RequestBody Role role) {
         return roleService.addRole(role);
     }
 
     @ApiOperation(value = "查询角色信息")
+    @PreAuthorize("hasAuthority('sys:role:query')")
     @RequestMapping(value = "getRole/{roleId}", method = RequestMethod.GET)
     public Result getRole(@PathVariable Long roleId) {
         if (ObjectUtil.isNull(roleId)) {

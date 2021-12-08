@@ -19,26 +19,26 @@ public class Result {
 
     private String message;
 
-    private Object obj;
+    private Object data;
 
     public static Result success(String message) {
         return new Result(ResultCode.SUCCESS, message, null);
     }
 
-    public static Result success(Object obj) {
-        return new Result(ResultCode.SUCCESS, null, obj);
+    public static Result success(Object data) {
+        return new Result(ResultCode.SUCCESS, "操作成功", data);
     }
 
-    public static Result success(String message, Object obj) {
-        return new Result(ResultCode.SUCCESS, message, obj);
+    public static Result success(String message, Object data) {
+        return new Result(ResultCode.SUCCESS, message, data);
     }
 
     public static Result fail(String message) {
         return new Result(ResultCode.FAIL, message, null);
     }
 
-    public static Result fail(String message, Object obj) {
-        return new Result(ResultCode.FAIL, message, obj);
+    public static Result fail(String message, Object data) {
+        return new Result(ResultCode.FAIL, message, data);
     }
 
     public static Result fail(int code, String message) {

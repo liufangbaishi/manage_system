@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.service.IAuthService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ public class AuthController {
     @Value("${jwt.tokenHead:Bearer}")
     private String head;
 
+    @ApiOperation(value = "登录")
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public Result login(@RequestBody LoginParam loginParam, HttpServletRequest request) {
         if (StrUtil.isEmpty(loginParam.getUserName()) || StrUtil.isEmpty(loginParam.getPassword())) {
@@ -42,5 +44,18 @@ public class AuthController {
                 .put("token", token)
                 .put("head", head)
                 .build());
+    }
+
+
+    @ApiOperation(value = "获取验证码")
+    @RequestMapping(value = "getCaptcha", method = RequestMethod.GET)
+    public Result getCaptcha() {
+        Result result;
+        try {
+            result = authService.getCaptcha();
+        } catch (Exception e) {
+            result = Result.fail("生成验证码失败");
+        }
+        return result;
     }
 }

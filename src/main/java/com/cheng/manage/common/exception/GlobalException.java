@@ -1,5 +1,6 @@
 package com.cheng.manage.common.exception;
 
+import cn.hutool.http.HttpStatus;
 import com.cheng.manage.common.consts.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -41,5 +42,16 @@ public class GlobalException {
     @ExceptionHandler(value = LoginException.class)
     public Result handler(LoginException e) {
         return Result.fail(e.getMessage());
+    }
+
+    /**
+     * 其他异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = RuntimeException.class)
+    public Result handler(RuntimeException e) {
+        log.error("运行时异常：----------------{}", e.getMessage());
+        return Result.fail(HttpStatus.HTTP_BAD_REQUEST, e.getMessage());
     }
 }

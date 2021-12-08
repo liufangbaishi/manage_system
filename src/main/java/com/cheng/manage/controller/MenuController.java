@@ -36,12 +36,14 @@ public class MenuController {
     }
 
     @ApiOperation(value = "新增菜单")
+    @PreAuthorize("hasAuthority('sys:menu:add')")
     @RequestMapping(value = "saveMenu", method = RequestMethod.POST)
     public Result saveMenu(@Validated @RequestBody Menu menu) {
         return menuService.addMenu(menu);
     }
 
     @ApiOperation(value = "查询菜单信息")
+    @PreAuthorize("hasAuthority('sys:menu:query')")
     @RequestMapping(value = "getMenu/{menuId}", method = RequestMethod.GET)
     public Result getMenu(@PathVariable Long menuId) {
         Menu menuById = menuService.getById(menuId);

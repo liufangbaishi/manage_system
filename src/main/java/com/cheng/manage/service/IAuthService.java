@@ -1,9 +1,11 @@
 package com.cheng.manage.service;
 
+import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.model.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @author weicheng
@@ -33,4 +35,10 @@ public interface IAuthService {
      * @return
      */
     String login(LoginParam loginParam, HttpServletRequest request);
+
+    /**
+     * 生成验证码
+     * @return
+     */
+    Result getCaptcha() throws IOException;
 }

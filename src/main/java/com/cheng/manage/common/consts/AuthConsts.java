@@ -9,6 +9,12 @@ package com.cheng.manage.common.consts;
  */
 public class AuthConsts {
 
+    /**
+     * 验证码的key
+     */
+    public static final String CAPTCHA_KEY = "captcha:";
+
+
     public static final String ROLE_PREFIX = "ROLE_";
 
     /**

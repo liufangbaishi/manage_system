@@ -21,7 +21,9 @@ public class LoginParam {
     @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "输入的验证码")
     private String code;
 
+    @ApiModelProperty(value = "验证码对应的key")
     private String uuid;
 }

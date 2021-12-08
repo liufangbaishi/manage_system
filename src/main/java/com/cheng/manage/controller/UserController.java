@@ -10,6 +10,7 @@ import com.cheng.manage.service.IUserService;
 import com.cheng.manage.vo.TableList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class UserController {
     private IUserService userService;
 
     @ApiOperation(value = "分页查询用户列表")
+    @PreAuthorize("hasAuthority('sys:user:list')")
     @RequestMapping(value = "getUserList", method = RequestMethod.POST)
     public Result getUserList(@RequestBody PageParam<User> queryUser) {
         TableList userList = userService.getUserList(queryUser);
@@ -39,12 +41,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "新增用户")
+    @PreAuthorize("hasAuthority('sys:user:add')")
     @RequestMapping(value = "saveUser", method = RequestMethod.POST)
     public Result saveUser(@Validated @RequestBody User user) {
         return userService.addUser(user);
     }
 
     @ApiOperation(value = "查询用户信息")
+    @PreAuthorize("hasAuthority('sys:user:query')")
     @RequestMapping(value = "getUser/{userId}", method = RequestMethod.GET)
     public Result getUser(@PathVariable Long userId) {
         if (ObjectUtil.isNull(userId)) {
