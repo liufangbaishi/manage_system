@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 有些安全接口需要再次用验证码验证
  * @author weicheng
  * @version v1.0.0
  * @description
