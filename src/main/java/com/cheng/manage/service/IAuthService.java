@@ -41,4 +41,10 @@ public interface IAuthService {
      * @return
      */
     Result getCaptcha() throws IOException;
+
+    /**
+     * 查询当前用户拥有的权限
+     * @return
+     */
+    Result getCurrentNav();
 }

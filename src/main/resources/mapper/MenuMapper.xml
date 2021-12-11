@@ -51,5 +51,24 @@
             AND ur.user_id = #{userId}
     </select>
 
+    <select id="selectUserNavList" resultType="com.cheng.manage.model.Menu">
+        SELECT DISTINCT
+            m.menu_id,
+            m.menu_name,
+            m.perms,
+            m.parent_id,
+            m.order_num,
+            m.path,
+            m.component,
+            m.icon
+        FROM
+            sys_menu m
+                LEFT JOIN sys_role_menu mr ON m.menu_id = mr.menu_id
+                LEFT JOIN sys_user_role ur ON ur.role_id = mr.role_id
+        WHERE
+            m.menu_type = 'M' OR m.menu_type = 'C'
+            AND ur.user_id = #{userId}
+        ORDER BY m.order_num
+    </select>
 
 </mapper>

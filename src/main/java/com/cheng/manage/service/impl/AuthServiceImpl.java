@@ -4,10 +4,12 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cheng.manage.common.consts.AuthConsts;
 import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.consts.ResultCode;
 import com.cheng.manage.common.exception.LoginException;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.mapper.MenuMapper;
@@ -18,8 +20,10 @@ import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
+import com.cheng.manage.utils.BuildTree;
 import com.cheng.manage.utils.IpUtils;
 import com.cheng.manage.utils.JwtUtils;
+import com.cheng.manage.utils.SecurityUtils;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -111,7 +116,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public String login(LoginParam loginParam, HttpServletRequest request) {
         // 判断验证码
-        validate(loginParam);
+//        validate(loginParam);
         // 执行登录方法
         Authentication authentication = null;
         try {
@@ -174,5 +179,24 @@ public class AuthServiceImpl implements IAuthService {
                 .put("code", Base64.encode(outputStream.toByteArray()))
                 .build()
         );
+    }
+
+    @Override
+    public Result getCurrentNav() {
+        User currentUser = SecurityUtils.getCurrentUser();
+        if (ObjectUtil.isNull(currentUser)) {
+            return Result.fail(ResultCode.TOKEN_EXPIRE, "用户信息不存在，重新登录");
+        }
+        // 查询菜单
+        List<Menu> menuList = menuMapper.selectUserNavList(currentUser.getUserId());
+        List<Menu> menuTree = BuildTree.buildTree(menuList);
+        // 查询按钮
+        String authority = getAuthority(currentUser.getUserId());
+        String[] authorities = StringUtils.tokenizeToStringArray(authority, ",");
+
+        return Result.success(MapUtil.builder()
+                .put("authorities", authorities)
+                .put("nav", menuTree)
+                .map());
     }
 }
