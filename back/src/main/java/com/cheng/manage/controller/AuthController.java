@@ -4,9 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.LoginParam;
-import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
-import com.cheng.manage.utils.SecurityUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,12 +62,8 @@ public class AuthController {
     @ApiOperation(value = "获取当前登录用户的基本信息")
     @RequestMapping(value = "getCurrentUser", method = RequestMethod.GET)
     public Result getCurrentUser() {
-        User currentUser = SecurityUtils.getCurrentUser();
-        currentUser.setPassword(null);
-        return Result.success(currentUser);
+        return authService.getCurrentUser();
     }
-
-
 
     @ApiOperation(value = "获取当前用户的权限信息")
     @RequestMapping(value = "nav", method = RequestMethod.GET)

@@ -1,5 +1,6 @@
 package com.cheng.manage.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.UUID;
@@ -24,6 +25,8 @@ import com.cheng.manage.utils.BuildTree;
 import com.cheng.manage.utils.IpUtils;
 import com.cheng.manage.utils.JwtUtils;
 import com.cheng.manage.utils.SecurityUtils;
+import com.cheng.manage.vo.RouterVo;
+import com.cheng.manage.vo.UserVo;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -113,10 +117,16 @@ public class AuthServiceImpl implements IAuthService {
         return authorites;
     }
 
+    /**
+     * 登录
+     * @param loginParam
+     * @param request
+     * @return
+     */
     @Override
     public String login(LoginParam loginParam, HttpServletRequest request) {
         // 判断验证码
-//        validate(loginParam);
+        validate(loginParam);
         // 执行登录方法
         Authentication authentication = null;
         try {
@@ -190,13 +200,76 @@ public class AuthServiceImpl implements IAuthService {
         // 查询菜单
         List<Menu> menuList = menuMapper.selectUserNavList(currentUser.getUserId());
         List<Menu> menuTree = BuildTree.buildTree(menuList);
+        List<RouterVo> routerVoList = buildRouter(menuTree);
         // 查询按钮
         String authority = getAuthority(currentUser.getUserId());
         String[] authorities = StringUtils.tokenizeToStringArray(authority, ",");
 
         return Result.success(MapUtil.builder()
                 .put("authorities", authorities)
-                .put("nav", menuTree)
+                .put("nav", routerVoList)
                 .map());
+    }
+
+    private List<RouterVo> buildRouter(List<Menu> menus) {
+        List<RouterVo> routers = new LinkedList<>();
+        for (Menu menu : menus) {
+            RouterVo routerVo = new RouterVo();
+            routerVo.setMenuId(menu.getMenuId());
+            routerVo.setHidden("1".equals(menu.getVisible())); // 1 为隐藏 hidden为true
+            String routerName = menu.getPath().substring(0, 1).toUpperCase() + menu.getPath().substring(1);
+            routerVo.setName(routerName);
+            routerVo.setPath(getPath(menu));
+            routerVo.setComponent(getComponent(menu));
+            routerVo.setMenuName(menu.getMenuName());
+            routerVo.setIcon(menu.getIcon());
+            List<Menu> menuChildren = menu.getChildren();
+            if (CollUtil.isNotEmpty(menuChildren) && "M".equals(menu.getMenuType())) {
+                routerVo.setRedirect("noRedirect");
+                routerVo.setAlwaysShow(true);
+                routerVo.setChildren(buildRouter(menuChildren));
+            }
+            routers.add(routerVo);
+        }
+        return routers;
+    }
+    /**
+     * 获取组件信息
+     * @param menu 菜单信息
+     * @return 组件信息
+     */
+    public String getComponent(Menu menu) {
+        String component = menu.getComponent();
+        // M目录 C菜单
+        if (StrUtil.isEmpty(component) && "M".equals(menu.getMenuType())) {
+            component = menu.getParentId() == 0 ? "Layout" : "ParentView";
+        }
+        return component;
+    }
+    /**
+     * 获取路径信息
+     * @param menu 菜单信息
+     * @return 路径信息
+     */
+    public String getPath(Menu menu) {
+        String routerPath = menu.getPath();
+        // M目录 C菜单
+        if (0 == menu.getParentId().intValue() && "M".equals(menu.getMenuType())) {
+            routerPath = "/" + menu.getPath();
+        }
+        return routerPath;
+    }
+
+    @Override
+    public Result getCurrentUser() {
+        User currentUser = SecurityUtils.getCurrentUser();
+        currentUser.setPassword(null);
+        UserVo userVo = new UserVo();
+        BeanUtil.copyProperties(currentUser, userVo);
+        List<Role> roles = roleMapper.selectUserRoleList(currentUser.getUserId());
+        if (CollUtil.isNotEmpty(roles) && roles.size() > 0) {
+            userVo.setRoles(roles.stream().map(Role::getRoleKey).collect(Collectors.toList()));
+        }
+        return Result.success(userVo);
     }
 }

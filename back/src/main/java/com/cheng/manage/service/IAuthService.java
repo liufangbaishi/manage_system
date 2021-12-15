@@ -47,4 +47,10 @@ public interface IAuthService {
      * @return
      */
     Result getCurrentNav();
+
+    /**
+     * 查询当前用户基本信息
+     * @return
+     */
+    Result getCurrentUser();
 }

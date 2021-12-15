@@ -60,7 +60,8 @@
             m.order_num,
             m.path,
             m.component,
-            m.icon
+            m.icon,
+            m.menu_type
         FROM
             sys_menu m
                 LEFT JOIN sys_role_menu mr ON m.menu_id = mr.menu_id
