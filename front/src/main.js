@@ -11,9 +11,12 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import plugins from './plugins' // plugins
 
 import '@/icons' // icon
 import '@/permission' // permission control
+
+Vue.use(plugins)
 
 /**
  * If you don't want to use mock-server
