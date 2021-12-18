@@ -28,12 +28,11 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      console.log(hasRoles)
       if (hasRoles) {
         next()
       } else {
         try {
-          // get user info
+          // 查询用户信息，根据角色判断是否查询菜单栏和权限
           store.dispatch('user/getInfo')
 
           const accessRoutes = await store.dispatch('permission/generateRoutes')

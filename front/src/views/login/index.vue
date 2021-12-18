@@ -66,6 +66,7 @@
 <script>
 
 import { getCaptcha } from '@/api/user'
+import store from '@/store'
 
 export default {
   name: 'Login',

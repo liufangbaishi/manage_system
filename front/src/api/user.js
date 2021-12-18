@@ -14,16 +14,30 @@ export function getCaptcha() {
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
     url: '/auth/auth/getCurrentUser',
     method: 'get'
   })
 }
 
-export function getNav(token) {
+export function getNav() {
   return request({
     url: '/auth/auth/nav',
+    method: 'get'
+  })
+}
+
+export function updateUserProfile(data) {
+  return request({
+    url: '/auth/auth/getCurrentUser',
+    method: 'get'
+  })
+}
+
+export function updateUserPwd() {
+  return request({
+    url: '/auth/auth/getCurrentUser',
     method: 'get'
   })
 }
