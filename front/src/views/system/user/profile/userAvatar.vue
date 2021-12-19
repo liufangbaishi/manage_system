@@ -120,7 +120,7 @@ export default {
     uploadImg() {
       this.$refs.cropper.getCropBlob(data => {
         const formData = new FormData()
-        formData.append('avatarfile', data)
+        formData.append('avatarFile', data)
         uploadAvatar(formData).then(response => {
           this.open = false
           this.options.img = process.env.VUE_APP_BASE_API + response.imgUrl

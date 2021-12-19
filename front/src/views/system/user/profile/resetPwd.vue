@@ -54,7 +54,11 @@ export default {
     submit() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          updateUserPwd(this.user.oldPassword, this.user.newPassword).then(response => {
+          const data = {
+            oldPassword: this.user.oldPassword,
+            newPassword: this.user.newPassword
+          }
+          updateUserPwd(data).then(response => {
             this.$modal.msgSuccess('修改成功')
           })
         }

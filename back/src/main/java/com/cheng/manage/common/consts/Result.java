@@ -21,6 +21,10 @@ public class Result {
 
     private Object data;
 
+    public static Result success() {
+        return new Result(ResultCode.SUCCESS, "操作成功", null);
+    }
+
     public static Result success(String message) {
         return new Result(ResultCode.SUCCESS, message, null);
     }
@@ -31,6 +35,10 @@ public class Result {
 
     public static Result success(String message, Object data) {
         return new Result(ResultCode.SUCCESS, message, data);
+    }
+
+    public static Result fail() {
+        return new Result(ResultCode.FAIL, "操作失败", null);
     }
 
     public static Result fail(String message) {

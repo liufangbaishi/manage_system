@@ -3,7 +3,7 @@
     <el-form-item label="用户昵称" prop="nickName">
       <el-input v-model="user.nickName" maxlength="30" />
     </el-form-item>
-    <el-form-item label="手机号码" prop="phonenumber">
+    <el-form-item label="手机号码" prop="phoneNumber">
       <el-input v-model="user.phoneNumber" maxlength="11" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
@@ -47,7 +47,7 @@ export default {
             trigger: ['blur', 'change']
           }
         ],
-        phonenumber: [
+        phoneNumber: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' },
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,

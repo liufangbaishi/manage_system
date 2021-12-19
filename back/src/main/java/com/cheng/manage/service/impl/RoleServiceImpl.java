@@ -9,6 +9,7 @@ import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.mapper.MenuMapper;
 import com.cheng.manage.mapper.RoleMapper;
+import com.cheng.manage.mapper.UserRoleMapper;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
@@ -42,6 +43,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Autowired
     private MenuMapper menuMapper;
 
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
     /**
      * 查询所有角色 分页
      * @param queryRole
@@ -51,7 +55,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public TableList getRoleList(PageParam<Role> queryRole) {
         PageInfo<Role> pageRoleList = PageHelper
                 .startPage(queryRole.getPageNum(), queryRole.getPageSize())
-                .doSelectPageInfo(() -> getAllRoleList(queryRole.getParam()));
+                .doSelectPageInfo(() -> getAllRoleList(queryRole.getParams()));
 
         return TableList.builder().total(pageRoleList.getTotal()).list(pageRoleList.getList()).build();
     }
@@ -124,6 +128,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      */
     @Override
     public List<User> getUserByRoleId(Long roleId) {
-        return roleMapper.selectUserByRoleId(roleId);
+        return userRoleMapper.selectUserByRoleId(roleId);
     }
 }

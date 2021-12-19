@@ -3,6 +3,7 @@ package com.cheng.manage.common.exception;
 import cn.hutool.http.HttpStatus;
 import com.cheng.manage.common.consts.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalException {
+public class GlobalExceptionHandler {
 
     /**
      * 实体校验异常捕获
@@ -42,6 +43,16 @@ public class GlobalException {
     @ExceptionHandler(value = LoginException.class)
     public Result handler(LoginException e) {
         return Result.fail(e.getMessage());
+    }
+
+    /**
+     * 权限不足异常
+     * @param e
+     */
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public Result handler(AccessDeniedException e) throws AccessDeniedException {
+        // 全局异常捕获先处理，会使AccessDeninedHandler失效，抛出去，才可以按原来的执行
+        throw e;
     }
 
     /**

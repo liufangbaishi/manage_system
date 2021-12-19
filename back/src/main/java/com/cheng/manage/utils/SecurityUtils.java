@@ -29,6 +29,22 @@ public class SecurityUtils {
     }
 
     /**
+     * 获取用户ID
+     * @return
+     */
+    public static Long getUserId() {
+        return getCurrentUser().getUserId();
+    }
+
+    /**
+     * 获取用户名
+     * @return
+     */
+    public static String getUserName() {
+        return getCurrentUser().getUserName();
+    }
+
+    /**
      * 设置当前用户信息
      * @param authentication
      */

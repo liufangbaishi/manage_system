@@ -38,4 +38,33 @@ public interface IUserService extends IService<User> {
      * @param userId
      */
     List<Role> getUserRoleList(Long userId);
+
+    /**
+     * 修改密码
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    Result updateUserPwd(String oldPassword, String newPassword);
+
+    /**
+     * 修改用户信息
+     * @param sysUser
+     * @return
+     */
+    Result updateUser(User sysUser);
+
+    /**
+     * 删除用户
+     * @param userIds
+     * @return
+     */
+    Result deleteUser(Long[] userIds);
+
+    /**
+     * 重置密码
+     * @param user
+     * @return
+     */
+    void resetPwd(User user);
 }

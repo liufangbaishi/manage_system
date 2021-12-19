@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class PageParam<T>  implements IPage {
+public class PageParam<T> implements IPage {
     //  description = "页码", defaultValue =  1
     @ApiModelProperty(value = "页码")
     private Integer pageNum = 1;
@@ -29,6 +29,6 @@ public class PageParam<T>  implements IPage {
 
     //  description = "参数"
     @ApiModelProperty(value = "参数")
-    private T param;
+    private T params;
 
 }

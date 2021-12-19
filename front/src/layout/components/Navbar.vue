@@ -19,7 +19,7 @@
 <!--          <el-dropdown-item @click.native="setting = true">-->
 <!--            <span>系统设置</span>-->
 <!--          </el-dropdown-item>-->
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <a target="_blank" href="https://github.com/liufangbaishi/manage_system/tree/main/front/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">

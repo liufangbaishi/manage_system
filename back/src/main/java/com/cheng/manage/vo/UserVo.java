@@ -1,13 +1,10 @@
 package com.cheng.manage.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.cheng.manage.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,4 +48,7 @@ public class UserVo extends User {
 
     @ApiModelProperty(value = "角色")
     List<String> roles;
+
+    @ApiModelProperty(value = "角色名称")
+    List<String> rolesName;
 }

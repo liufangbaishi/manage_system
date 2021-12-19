@@ -31,7 +31,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         httpServletResponse.setContentType("application/json;charset:UTF-8");
         // 返回登录提示
         ServletOutputStream outputStream = httpServletResponse.getOutputStream();
-        Result authenticationResult = Result.fail(ResultCode.TOKEN_EXPIRE, "请登录");
+        Result authenticationResult = Result.fail(ResultCode.TOKEN_EXPIRE, "token过期，请重新登录");
         byte[] byteResult = JSONUtil.toJsonStr(authenticationResult).getBytes(StandardCharsets.UTF_8);
         outputStream.write(byteResult);
         // 关闭流 收尾

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cheng.manage.mapper.RoleMapper">
+<mapper namespace="com.cheng.manage.mapper.UserRoleMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.cheng.manage.model.Role">
@@ -21,4 +21,38 @@
     <sql id="Base_Column_List">
         role_id, role_name, role_key, role_sort, status, del_flag, create_by, create_time, update_by, update_time, remark
     </sql>
+
+    <insert id="addUserRole">
+    </insert>
+
+    <delete id="deleteUserRole">
+        delete from sys_user_role where user_id in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <select id="selectUserByRoleId" resultType="com.cheng.manage.model.User">
+        SELECT
+            u.user_id,
+            user_name,
+            nick_name
+        FROM
+            sys_user u
+                LEFT JOIN sys_user_role ur ON ur.user_id = u.user_id
+        WHERE
+            ur.role_id = #{roleId}
+    </select>
+
+    <select id="selectUserRoleList" resultType="com.cheng.manage.model.Role">
+        SELECT
+            ur.role_id,
+            role_key,
+            role_name
+        FROM
+            sys_user_role ur
+                LEFT JOIN sys_role r ON ur.role_id = r.role_id
+        WHERE
+            ur.user_id = #{userId}
+    </select>
 </mapper>

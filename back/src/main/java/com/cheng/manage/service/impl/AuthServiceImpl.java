@@ -14,8 +14,8 @@ import com.cheng.manage.common.consts.ResultCode;
 import com.cheng.manage.common.exception.LoginException;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.mapper.MenuMapper;
-import com.cheng.manage.mapper.RoleMapper;
 import com.cheng.manage.mapper.UserMapper;
+import com.cheng.manage.mapper.UserRoleMapper;
 import com.cheng.manage.model.CurrentUser;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
@@ -65,10 +65,10 @@ public class AuthServiceImpl implements IAuthService {
     private UserMapper userMapper;
 
     @Autowired
-    private RoleMapper roleMapper;
+    private MenuMapper menuMapper;
 
     @Autowired
-    private MenuMapper menuMapper;
+    private UserRoleMapper userRoleMapper;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements IAuthService {
         }
         String authorites = "";
         // 查询用户角色
-        List<Role> roles = roleMapper.selectUserRoleList(userId);
+        List<Role> roles = userRoleMapper.selectUserRoleList(userId);
         if (CollUtil.isNotEmpty(roles) && roles.size() > 0) {
             String roleAuthorites = roles.stream().map(e -> AuthConsts.ROLE_PREFIX + e.getRoleKey()).collect(Collectors.joining(","));
             authorites = roleAuthorites.concat(",");
@@ -266,9 +266,10 @@ public class AuthServiceImpl implements IAuthService {
         currentUser.setPassword(null);
         UserVo userVo = new UserVo();
         BeanUtil.copyProperties(currentUser, userVo);
-        List<Role> roles = roleMapper.selectUserRoleList(currentUser.getUserId());
+        List<Role> roles = userRoleMapper.selectUserRoleList(currentUser.getUserId());
         if (CollUtil.isNotEmpty(roles) && roles.size() > 0) {
             userVo.setRoles(roles.stream().map(Role::getRoleKey).collect(Collectors.toList()));
+            userVo.setRolesName(roles.stream().map(Role::getRoleName).collect(Collectors.toList()));
         }
         return Result.success(userVo);
     }

@@ -17,17 +17,4 @@ import java.util.List;
  */
 public interface RoleMapper extends BaseMapper<Role> {
 
-    /**
-     * 查询roleId对应的用户列表
-     * @param roleId
-     * @return
-     */
-    List<User> selectUserByRoleId(@Param("roleId") Long roleId);
-
-
-    /**
-     * 获取用户对应的角色列表
-     * @param userId
-     */
-    List<Role> selectUserRoleList(@Param("userId") Long userId);
 }
