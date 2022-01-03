@@ -61,7 +61,8 @@
             m.path,
             m.component,
             m.icon,
-            m.menu_type
+            m.menu_type,
+            m.visible
         FROM
             sys_menu m
                 LEFT JOIN sys_role_menu mr ON m.menu_id = mr.menu_id

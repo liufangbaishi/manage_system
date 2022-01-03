@@ -33,17 +33,126 @@ npm run build:stage
 npm run build:prod
 ```
 
+## 部署
+### 1. 前端请求
+```js
+url: /auth/auth/getCaptcha
+这里的第一个auth相当于baseURL，在nginx的配置中
+proxy_pass http://manage/;
+将请求http://192.168.0.108/auth/auth/getCaptcha
+转换为http://192.168.0.102:8080/auth/getCaptcha
+proxy_pass http://manage/manage/;
+将请求http://192.168.0.108/auth/auth/getCaptcha
+转换为http://192.168.0.102:8080/manage/auth/getCaptcha
+```
+### 2. nginx配置
+```js
+// 后端地址
+ upstream manage {
+  server 192.168.0.102:8080;
+}
+server {
+  listen       80;
+  server_name  localhost;
+
+  #charset koi8-r;
+
+  #access_log  logs/host.access.log  main;
+
+  location / {
+    root   /app/dist;
+    try_files $uri $uri/ /index.html;
+    index  index.html index.htm;
+  }
+
+  location /auth/ {
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header REMOTE-HOST $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    // proxy_pass http://manage/;    // 这里manage后面的/不能去掉，如果去掉了后端请求地址就会不对
+    proxy_pass http://manage/manage/; // 如果后端有context-path写在这里
+  }
+}
+```
+
 ## 可以从中学到什么？
 #### 1. 路由守卫
+```js
+beforeEach 首先根据token判断，跳转页面
 
-#### 2. 全局组件
+router.beforeEach(async(to, from, next) => {
+  const hasToken = getToken()
+  if (hasToken) {
+    next({ path: '/' })
+  } else {
+    next()
+  }
+})
+```
 
-#### 3. 组件中的全局属性
+#### 2. 公共方法
+2.1 在utils中写一个公共方法，例如：
+```js
+export function test() {
+  return 'a'
+}
+```
+> 1. 常规使用
+>  - 在需要调用的文件中引入 import { test } from '@/utils'
+>  - 在代码中直接调用 test()
 
-#### 4. 全局js
-> 1. utils
+> 2. prototype
+> - 在main.js中引入 import { parseTime } from '@/utils'
+> - 在main.js中 Vue.prototype.parseTime = parseTime
+> - 在代码中调用 this.parseTime()
 
+2.2 全局常量
+```js
+定义
+// 用户状态
+export const statusDict = [
+  { label: '正常', value: '0' },
+  { label: '停用', value: '1' }
+]
+// 性别
+export const sexDict = [
+  { label: '男', value: '0' },
+  { label: '女', value: '1' },
+  { label: '未知', value: '2' }
+]
+使用
+import { sexDict, statusDict } from '@/utils/consts'
+data() {
+  return {
+    // 下拉框
+    statusDict: statusDict,
+    sexDict: sexDict,
+  }
+}
+在template中使用statusDict，sexDict
+```
 
-> 2. plugins
+#### 3. 全局组件
+> 1. 常规使用
+>  - 在需要调用的文件中引入 import
+>  - 在components中添加
+>  - 在template代码中使用
 
-#### 5. tagsView
+> 2. Vue.component
+> - 在main.js中引入 import RightToolbar from '@/components/RightToolbar'
+> - 在main.js中 Vue.component('RightToolbar', RightToolbar) // 挂载组件
+> - 在代码中调用 <right-toolbar />
+
+>3. 封装提示框
+>  - 在main.js中引入 import modal from '@/plugins/modal'
+>  - Vue.prototype.$modal = modal
+>  - 在代码中调用 this.$modal.xxx()
+
+#### 4. 组件中的全局属性
+1. 判断权限
+
+#### 5. store
+state
+mounted
+disptched

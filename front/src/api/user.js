@@ -13,21 +13,26 @@ export function getCaptcha() {
     method: 'get'
   })
 }
-
 export function getInfo() {
   return request({
     url: '/auth/auth/getCurrentUser',
     method: 'get'
   })
 }
-
 export function getNav() {
   return request({
     url: '/auth/auth/nav',
     method: 'get'
   })
 }
+export function logout() {
+  return request({
+    url: '/auth/auth/logout',
+    method: 'post'
+  })
+}
 
+// 更改用户自己信息
 export function updateUserProfile(data) {
   return request({
     url: '/auth/user/updateSelf',
@@ -36,6 +41,7 @@ export function updateUserProfile(data) {
   })
 }
 
+// 更改密码
 export function updateUserPwd(data) {
   return request({
     url: '/auth/user/updateUserPwd',
@@ -44,18 +50,12 @@ export function updateUserPwd(data) {
   })
 }
 
+// 修改用户头像
 export function uploadAvatar(data) {
   return request({
     url: '/auth/user/uploadAvatar',
     method: 'post',
     data
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/auth/auth/logout',
-    method: 'post'
   })
 }
 
@@ -123,6 +123,23 @@ export function changeUserStatus(userId, status) {
   }
   return request({
     url: '/auth/user/changeStatus',
+    method: 'post',
+    data
+  })
+}
+
+// 查询授权角色
+export function getAuthRole(userId) {
+  return request({
+    url: '/auth/user/getRoleByUser/' + userId,
+    method: 'get'
+  })
+}
+
+// 保存授权角色
+export function updateAuthRole(data) {
+  return request({
+    url: '/manage/user/authRole',
     method: 'post',
     data
   })

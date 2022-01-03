@@ -46,6 +46,12 @@ public class AuthController {
                 .build());
     }
 
+    @ApiOperation(value = "退出登录")
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    public Result logout(String token) {
+        return Result.success(authService.logout(token));
+    }
+
 
     @ApiOperation(value = "获取验证码")
     @RequestMapping(value = "getCaptcha", method = RequestMethod.GET)

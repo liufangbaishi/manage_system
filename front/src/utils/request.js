@@ -65,6 +65,11 @@ service.interceptors.response.use(
           })
         })
       }
+
+      if (res.code === 403) {
+        // 无权限
+        location.href = '/404'
+      }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else {
       return res

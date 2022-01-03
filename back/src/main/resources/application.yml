@@ -60,6 +60,10 @@ jwt:
   # JWT 加解密使用的密钥
   secret: cheng
   # JWT的超期限时间（60*60*24）24小时
-  expiration: 86400
+  expiration: 3600
   # JWT 负载中拿到开头
   tokenHead: Bearer
+
+server:
+  servlet:
+    context-path: /manage

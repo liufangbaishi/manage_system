@@ -80,6 +80,20 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+
+  {
+    path: '/system/userRole',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: ':userId(\\d+)',
+        component: () => import('@/views/system/user/authRole'),
+        name: 'AuthRole',
+        meta: { title: '分配角色', activeMenu: '/system/user' }
+      }
+    ]
   }
 ]
 

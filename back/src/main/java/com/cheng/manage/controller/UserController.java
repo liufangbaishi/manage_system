@@ -6,7 +6,6 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
-import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IUserService;
 import com.cheng.manage.utils.SecurityUtils;
@@ -18,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -114,13 +112,13 @@ public class UserController {
 
 
     @ApiOperation(value = "查询用户对应的角色信息")
-    @RequestMapping(value = "getUserByRole/{userId}", method = RequestMethod.GET)
-    public Result getUserByRole(@PathVariable Long userId) {
+    @PreAuthorize("hasAuthority('sys:user:role')")
+    @RequestMapping(value = "getRoleByUser/{userId}", method = RequestMethod.GET)
+    public Result getRoleByUser(@PathVariable Long userId) {
         if (ObjectUtil.isNull(userId)) {
             return Result.fail("用户id不能为空");
         }
-        List<Role> roleList = userService.getUserRoleList(userId);
-        return Result.success(roleList);
+        return Result.success(userService.getUserRoleList(userId));
     }
 
     @ApiOperation(value = "修改个人信息")

@@ -272,16 +272,15 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus } from '@/api/user'
 import { getToken } from '@/utils/auth'
-import dicts from '@/utils/consts'
+import { sexDict, statusDict } from '@/utils/consts'
 
 export default {
   name: 'User',
   data() {
-    dicts
     return {
       // 下拉框
-      statusDict: dicts.statusDict,
-      sexDict: dicts.sexDict,
+      statusDict: statusDict,
+      sexDict: sexDict,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -483,7 +482,7 @@ export default {
     /** 分配角色操作 */
     handleAuthRole: function(row) {
       const userId = row.userId
-      this.$router.push('/system/user-auth/role/' + userId)
+      this.$router.push('/system/userRole/' + userId)
     },
     /** 提交按钮 */
     submitForm: function() {

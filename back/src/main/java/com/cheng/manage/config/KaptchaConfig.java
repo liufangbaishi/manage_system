@@ -23,8 +23,10 @@ public class KaptchaConfig {
     @Bean
     public DefaultKaptcha producer() {
         Properties properties = new Properties();
-        properties.put(KAPTCHA_BORDER, "no");
-        properties.put(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "black");
+        properties.put(KAPTCHA_BORDER, "yes");
+        properties.put(KAPTCHA_BACKGROUND_CLR_FROM, "100,100,100");
+        properties.put(KAPTCHA_BACKGROUND_CLR_TO, "248,248,248");
+        properties.put(KAPTCHA_TEXTPRODUCER_FONT_COLOR, "WHITE");
         properties.put(KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
         properties.put(KAPTCHA_IMAGE_HEIGHT, "40");
         properties.put(KAPTCHA_IMAGE_WIDTH, "120");

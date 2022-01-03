@@ -12,6 +12,7 @@ import com.cheng.manage.mapper.UserMapper;
 import com.cheng.manage.mapper.UserRoleMapper;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
+import com.cheng.manage.service.IRoleService;
 import com.cheng.manage.service.IUserService;
 import com.cheng.manage.utils.SecurityUtils;
 import com.cheng.manage.vo.TableList;
@@ -22,8 +23,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,6 +45,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private IRoleService roleService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -88,8 +95,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public List<Role> getUserRoleList(Long userId) {
-        return userRoleMapper.selectUserRoleList(userId);
+    public Map<String, Object> getUserRoleList(Long userId) {
+        List<Role> allRoleList = roleService.getAllRoleList(new Role());
+        List<Long> userRoleIds = userRoleMapper.selectUserRoleList(userId).stream().map(Role::getRoleId).collect(Collectors.toList());
+        allRoleList.forEach(item -> item.setFlag(userRoleIds.contains(item.getRoleId())));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("roles", allRoleList);
+        result.put("user", userMapper.selectById(userId));
+        return result;
     }
 
     @Override

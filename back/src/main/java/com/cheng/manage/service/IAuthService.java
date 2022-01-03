@@ -53,4 +53,11 @@ public interface IAuthService {
      * @return
      */
     Result getCurrentUser();
+
+    /**
+     * 退出登录
+     * @param token
+     * @return
+     */
+    String logout(String token);
 }

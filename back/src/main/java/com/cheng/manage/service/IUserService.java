@@ -3,11 +3,10 @@ package com.cheng.manage.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.dto.PageParam;
-import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.vo.TableList;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ public interface IUserService extends IService<User> {
      * 通过用户id查询用户的角色列表
      * @param userId
      */
-    List<Role> getUserRoleList(Long userId);
+    Map<String, Object> getUserRoleList(Long userId);
 
     /**
      * 修改密码

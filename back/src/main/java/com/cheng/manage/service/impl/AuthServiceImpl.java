@@ -273,4 +273,11 @@ public class AuthServiceImpl implements IAuthService {
         }
         return Result.success(userVo);
     }
+
+    @Override
+    public String logout(String token) {
+        redisTemplate.delete(AuthConsts.AUTHORITY +  SecurityUtils.getUserId());
+        SecurityUtils.setCurrentUser(null);
+        return "退出登录成功!";
+    }
 }

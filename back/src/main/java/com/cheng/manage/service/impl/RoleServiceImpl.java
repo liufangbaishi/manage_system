@@ -71,6 +71,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .eq(Role::getDelFlag, 0)
                 .eq(StrUtil.isNotBlank(role.getRoleKey()), Role::getRoleKey, role.getRoleKey())
                 .eq(StrUtil.isNotBlank(role.getRoleName()), Role::getRoleName, role.getRoleName())
+                .orderByAsc(Role::getRoleSort)
                 .list();
     }
 
