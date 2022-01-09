@@ -49,6 +49,7 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
+              v-has-permission="['sys:user:add']"
               type="primary"
               plain
               icon="el-icon-plus"
@@ -58,6 +59,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
+              v-has-permission="['sys:user:edit']"
               type="success"
               plain
               icon="el-icon-edit"
@@ -68,6 +70,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
+              v-has-permission="['sys:user:del']"
               type="danger"
               plain
               icon="el-icon-delete"
@@ -124,29 +127,33 @@
             width="200"
             class-name="small-padding fixed-width"
           >
-            <template v-if="scope.row.userId !== 1" slot-scope="scope">
+            <template slot-scope="scope">
               <el-button
+                v-has-permission="['sys:user:edit']"
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
               >修改</el-button>
               <el-button
+                v-has-permission="['sys:user:del']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
               >删除</el-button>
-              <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+              <el-dropdown v-has-permission="['sys:user:resetPwd', 'sys:user:role']" size="mini" @command="(command) => handleCommand(command, scope.row)">
                 <span class="el-dropdown-link">
                   <i class="el-icon-d-arrow-right el-icon--right" />更多
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    v-has-permission="['sys:user:resetPwd']"
                     command="handleResetPwd"
                     icon="el-icon-key"
                   >重置密码</el-dropdown-item>
                   <el-dropdown-item
+                    v-has-permission="['sys:user:role']"
                     command="handleAuthRole"
                     icon="el-icon-circle-check"
                   >分配角色</el-dropdown-item>

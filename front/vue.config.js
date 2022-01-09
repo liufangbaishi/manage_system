@@ -37,7 +37,7 @@ module.exports = {
         target: 'http://localhost:8080', // 项目后台IP
         changeOrigin: true, // 允许跨域请求
         pathRewrite: {
-          '^/auth': '/'
+          '^/auth': '/manage'
         }
       }
     }

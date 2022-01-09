@@ -76,7 +76,7 @@ server {
 }
 ```
 
-## 可以从中学到什么？
+## 学习
 #### 1. 路由守卫
 ```js
 beforeEach 首先根据token判断，跳转页面
@@ -149,10 +149,41 @@ data() {
 >  - Vue.prototype.$modal = modal
 >  - 在代码中调用 this.$modal.xxx()
 
-#### 4. 组件中的全局属性
-1. 判断权限
+#### 4. 自定义指令directive
+判断权限
+> - 在main.js中引入
+> - 在@/directive/permission/hasPermission.js中写入逻辑
+> - Vue.directive('hasPermission', hasPermission)
 
-#### 5. store
-state
-mounted
-disptched
+#### 5. store vuex状态管理
+1. state： 变量定义 
+2. mounted：给变量set值
+3. actions：提供给外部的方法
+```js
+// 在actions中调用mounted的方法
+commit('RESET_STATE', 参数)
+// 在actions中调用actions的方法
+dispatch('addVisitedView', 参数)
+// 外部调用actions的方法
+this.$store.dispatch('tagsView/addView', 参数)
+```
+4. export
+```js
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions
+}
+// index.js
+const store = new Vuex.Store({
+  modules: {
+    app,
+    permission,
+    tagsView,
+    settings,
+    user
+  },
+  getters
+})
+```

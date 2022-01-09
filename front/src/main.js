@@ -19,6 +19,9 @@ import '@/permission' // permission control
 import RightToolbar from '@/components/RightToolbar' // 引用自定义全局组件
 import { parseTime, addDateRange } from '@/utils' // 全局引用方法
 
+import directive from './directive' // directive// 自定义指令
+Vue.use(directive)
+
 Vue.use(plugins)
 Vue.component('RightToolbar', RightToolbar) // 挂载组件
 Vue.prototype.parseTime = parseTime

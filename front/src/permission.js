@@ -33,7 +33,11 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // 查询用户信息，根据角色判断是否查询菜单栏和权限
-          store.dispatch('user/getInfo')
+          const userInfo = await store.dispatch('user/getInfo')
+          if (!userInfo.roles) {
+            Message.warning('用户未分配角色')
+            next()
+          }
 
           const accessRoutes = await store.dispatch('permission/generateRoutes')
 
