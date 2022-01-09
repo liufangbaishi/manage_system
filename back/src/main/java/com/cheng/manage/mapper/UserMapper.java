@@ -27,7 +27,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param sysUser
      * @return
      */
-    List<User> checkPhoneNumber(User sysUser);
+    User checkPhoneNumber(User sysUser);
 
     /**
      * 更新用户信息

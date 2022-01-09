@@ -6,6 +6,7 @@ import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.User;
 import com.cheng.manage.vo.TableList;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,14 @@ public interface IUserService extends IService<User> {
      * @param userId
      */
     Map<String, Object> getUserRoleList(Long userId);
+
+    /**
+     * 修改用户角色
+     * @param userId
+     * @param roleIds
+     * @return
+     */
+    void setUserRole(Long userId, List<Long> roleIds);
 
     /**
      * 修改密码

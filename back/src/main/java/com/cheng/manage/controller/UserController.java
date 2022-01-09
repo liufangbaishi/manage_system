@@ -1,6 +1,7 @@
 package com.cheng.manage.controller;
 
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -119,6 +121,17 @@ public class UserController {
             return Result.fail("用户id不能为空");
         }
         return Result.success(userService.getUserRoleList(userId));
+    }
+
+    @ApiOperation(value = "修改用户的角色信息")
+    @PreAuthorize("hasAuthority('sys:user:role')")
+    @RequestMapping(value = "authRole", method = RequestMethod.POST)
+    public Result authRole(@RequestParam("userId") Long userId, @RequestParam("roleIds") List<Long> roleIds) {
+        if (ObjectUtil.isNull(userId) || CollUtil.isEmpty(roleIds)) {
+            return Result.fail("参数不能为空");
+        }
+        userService.setUserRole(userId, roleIds);
+        return Result.success();
     }
 
     @ApiOperation(value = "修改个人信息")

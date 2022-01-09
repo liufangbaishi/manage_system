@@ -1,9 +1,7 @@
 package com.cheng.manage.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.digest.DigestAlgorithm;
-import cn.hutool.crypto.digest.Digester;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cheng.manage.common.consts.Result;
@@ -23,10 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,26 +66,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result addUser(User user) {
-        User checkUser = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUserName, user.getUserName()));
+        User checkUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUserName, user.getUserName())
+                .eq(User::getDelFlag, "0"));
         if (!Objects.isNull(checkUser)) {
             return Result.fail("新增用户失败，用户名已存在");
         }
         // 判断电话号是否唯一
         if (StrUtil.isNotEmpty(user.getPhoneNumber())) {
-            List<User> userList = userMapper.checkPhoneNumber(user);
-            if (CollUtil.isNotEmpty(userList) && userList.size() > 1) {
+            User userPhone = userMapper.checkPhoneNumber(user);
+            if (ObjectUtil.isNotNull(userPhone) && !userPhone.getUserId().equals(user.getUserId())) {
                 return Result.fail("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
             }
         }
         // 生成一个随机密码
         String password = "123456";
-        Digester digester = new Digester(DigestAlgorithm.MD5);
-        user.setPassword(digester.digestHex(password));
+        user.setPassword(passwordEncoder.encode(password));
         user.setCreateBy("admin");
         user.setUpdateBy("admin");
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         userMapper.insert(user);
+        // 设置默认角色
+        userRoleMapper.addUserRole(user.getUserId(), new ArrayList<Long>(){{ add(1L); }});
         return Result.success("新增用户成功");
     }
 
@@ -104,6 +102,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         result.put("roles", allRoleList);
         result.put("user", userMapper.selectById(userId));
         return result;
+    }
+
+    @Override
+    public void setUserRole(Long userId, List<Long> roleIds) {
+        // 删除原先的用户角色关系
+        Long[] users = new Long[]{userId};
+        userRoleMapper.deleteUserRole(users);
+        // 重新添加用户角色关系
+        userRoleMapper.addUserRole(userId, roleIds);
     }
 
     @Override
@@ -129,8 +136,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result updateUser(User sysUser) {
         // 判断电话号是否唯一
         if (StrUtil.isNotEmpty(sysUser.getPhoneNumber())) {
-            List<User> userList = userMapper.checkPhoneNumber(sysUser);
-            if (CollUtil.isNotEmpty(userList) && userList.size() > 1) {
+            User userPhone = userMapper.checkPhoneNumber(sysUser);
+            if (ObjectUtil.isNotNull(userPhone) && !userPhone.getUserId().equals(sysUser.getUserId())) {
                 return Result.fail("修改用户'" + sysUser.getUserName() + "'失败，手机号码已存在");
             }
         }

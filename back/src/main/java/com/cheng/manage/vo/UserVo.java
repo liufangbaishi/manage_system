@@ -4,6 +4,7 @@ import com.cheng.manage.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @name UserVo
  * @date 2021/12/13 22:54
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class UserVo extends User {
 

@@ -23,6 +23,10 @@
     </sql>
 
     <insert id="addUserRole">
+        insert into sys_user_role(user_id, role_id) values
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
     </insert>
 
     <delete id="deleteUserRole">

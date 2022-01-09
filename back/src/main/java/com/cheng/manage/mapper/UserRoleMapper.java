@@ -24,7 +24,7 @@ public interface UserRoleMapper {
      * 添加用户角色关系
      * @return
      */
-    int addUserRole();
+    int addUserRole(@Param("userId")Long userId, @Param("roleIds")List<Long> roleIds);
 
 
     /**
