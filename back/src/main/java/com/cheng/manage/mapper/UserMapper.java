@@ -23,13 +23,6 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> getUserList(User userParam);
 
     /**
-     * 检查电话号是否重复
-     * @param sysUser
-     * @return
-     */
-    User checkPhoneNumber(User sysUser);
-
-    /**
      * 更新用户信息
      * @param sysUser
      * @return

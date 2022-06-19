@@ -1,6 +1,7 @@
 package com.cheng.manage.controller;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.service.IMenuService;
@@ -50,4 +51,20 @@ public class MenuController {
         return Result.success(menuById);
     }
 
+    @ApiOperation(value = "修改菜单信息")
+    @PreAuthorize("hasAuthority('sys:menu:update')")
+    @RequestMapping(value = "updateMenu", method = RequestMethod.POST)
+    public Result updateMenu(@RequestBody Menu menu) {
+        return menuService.updateMenu(menu);
+    }
+
+    @ApiOperation(value = "删除菜单信息")
+    @PreAuthorize("hasAuthority('sys:menu:del')")
+    @RequestMapping(value = "delMenu/{menuId}", method = RequestMethod.GET)
+    public Result delMenu(@PathVariable Long menuId) {
+        if (ObjectUtil.isNull(menuId)) {
+            return Result.fail("角色id不能为空");
+        }
+        return Result.success(menuService.delMenu(menuId));
+    }
 }

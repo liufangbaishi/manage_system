@@ -29,4 +29,17 @@ public interface IMenuService extends IService<Menu> {
      * @return
      */
     Result addMenu(Menu menu);
+
+    /**
+     * 修改权限
+     * @param menu
+     * @return
+     */
+    Result updateMenu(Menu menu);
+
+    /**
+     * 删除
+     * @param menuId
+     */
+    Result delMenu(Long menuId);
 }

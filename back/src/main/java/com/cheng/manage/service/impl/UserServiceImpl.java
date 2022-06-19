@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.enums.DelStausEnum;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.mapper.UserMapper;
 import com.cheng.manage.mapper.UserRoleMapper;
@@ -68,28 +69,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result addUser(User user) {
         User checkUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUserName, user.getUserName())
-                .eq(User::getDelFlag, "0"));
+                .eq(User::getDelFlag, DelStausEnum.NORMAL.getCode()));
         if (!Objects.isNull(checkUser)) {
             return Result.fail("新增用户失败，用户名已存在");
         }
+
         // 判断电话号是否唯一
         if (StrUtil.isNotEmpty(user.getPhoneNumber())) {
-            User userPhone = userMapper.checkPhoneNumber(user);
+            User userPhone = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                    .eq(User::getPhoneNumber, user.getPhoneNumber())
+                    .eq(User::getDelFlag, DelStausEnum.NORMAL.getCode()));
             if (ObjectUtil.isNotNull(userPhone) && !userPhone.getUserId().equals(user.getUserId())) {
                 return Result.fail("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
             }
         }
+
         // 生成一个随机密码
         String password = "123456";
         user.setPassword(passwordEncoder.encode(password));
-        user.setCreateBy("admin");
-        user.setUpdateBy("admin");
+        user.setCreateBy(SecurityUtils.getUserName());
+        user.setUpdateBy(SecurityUtils.getUserName());
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         userMapper.insert(user);
+
         // 设置默认角色
         userRoleMapper.addUserRole(user.getUserId(), new ArrayList<Long>(){{ add(1L); }});
-        return Result.success("新增用户成功");
+        return Result.success();
     }
 
     @Override
@@ -108,7 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void setUserRole(Long userId, List<Long> roleIds) {
         // 删除原先的用户角色关系
         Long[] users = new Long[]{userId};
-        userRoleMapper.deleteUserRole(users);
+        userRoleMapper.deleteByUser(users);
         // 重新添加用户角色关系
         userRoleMapper.addUserRole(userId, roleIds);
     }
@@ -136,11 +142,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result updateUser(User sysUser) {
         // 判断电话号是否唯一
         if (StrUtil.isNotEmpty(sysUser.getPhoneNumber())) {
-            User userPhone = userMapper.checkPhoneNumber(sysUser);
+            User userPhone = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                    .eq(User::getPhoneNumber, sysUser.getPhoneNumber())
+                    .eq(User::getDelFlag, DelStausEnum.NORMAL.getCode()));
             if (ObjectUtil.isNotNull(userPhone) && !userPhone.getUserId().equals(sysUser.getUserId())) {
                 return Result.fail("修改用户'" + sysUser.getUserName() + "'失败，手机号码已存在");
             }
         }
+
+        // 修改
         sysUser.setUpdateBy(SecurityUtils.getUserName());
         if (updateUserInfo(sysUser) > 0) {
             return Result.success();
@@ -152,7 +162,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public Result deleteUser(Long[] userIds) {
         // 删除用户角色关系
-        userRoleMapper.deleteUserRole(userIds);
+        userRoleMapper.deleteByUser(userIds);
         // 删除用户 逻辑删除
         if (userMapper.deleteUserByIds(userIds) > 0) {
             return Result.success();
@@ -160,6 +170,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.fail();
     }
 
+    /**
+     * 重置密码
+     * @param user
+     */
     @Override
     public void resetPwd(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));

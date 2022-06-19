@@ -15,19 +15,15 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class PageParam<T> implements IPage {
-    //  description = "页码", defaultValue =  1
-    @ApiModelProperty(value = "页码")
+    @ApiModelProperty(value = "页码", allowableValues = "1")
     private Integer pageNum = 1;
 
-    //	description = "页数", defaultValue = 20
-    @ApiModelProperty(value = "页数")
+    @ApiModelProperty(value = "页数", allowableValues = "10")
     private Integer pageSize = 20;
 
-    //	description = "排序", example = "id desc"
-    @ApiModelProperty(value = "排序")
+    @ApiModelProperty(value = "排序", allowableValues = "id desc")
     private String orderBy;
 
-    //  description = "参数"
     @ApiModelProperty(value = "参数")
     private T params;
 

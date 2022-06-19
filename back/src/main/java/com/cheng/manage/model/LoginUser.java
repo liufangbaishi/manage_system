@@ -1,6 +1,5 @@
 package com.cheng.manage.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,12 +16,15 @@ import java.util.Collection;
  */
 @Getter
 @Setter
-public class CurrentUser extends User {
+public class LoginUser extends User {
 
-    @ApiModelProperty(value = "用户id")
+    /**
+     * 用户id
+     */
     private Long userId;
 
-    public CurrentUser(Long userId, String userName, String password, Collection<? extends GrantedAuthority> authorities) {
+
+    public LoginUser(Long userId, String userName, String password, Collection<? extends GrantedAuthority> authorities) {
         super(userName, password, authorities);
         this.userId = userId;
     }

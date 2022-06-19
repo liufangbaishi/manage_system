@@ -62,10 +62,6 @@
         </where>
     </select>
 
-    <select id="checkPhoneNumber" resultType="com.cheng.manage.model.User">
-        select user_id, phone_number from sys_user where phone_number = #{phoneNumber} and del_flag = '0' limit 1
-    </select>
-
     <update id="updateUser">
         update sys_user
         <set>

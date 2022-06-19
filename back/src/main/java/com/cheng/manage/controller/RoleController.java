@@ -40,13 +40,6 @@ public class RoleController {
         return Result.success(roleList);
     }
 
-    @ApiOperation(value = "查询全部角色列表")
-    @RequestMapping(value = "getAllRoleList", method = RequestMethod.POST)
-    public Result getAllRoleList(@RequestBody Role queryRole) {
-        List<Role> roleList = roleService.getAllRoleList(queryRole);
-        return Result.success(roleList);
-    }
-
     @ApiOperation(value = "新增角色")
     @PreAuthorize("hasAuthority('sys:role:add')")
     @RequestMapping(value = "saveRole", method = RequestMethod.POST)
@@ -68,6 +61,27 @@ public class RoleController {
             return Result.success(roleVo);
         }
     }
+
+    @ApiOperation(value = "修改角色和权限")
+    @PreAuthorize("hasAuthority('sys:role:edit')")
+    @RequestMapping(value = "updateRole", method = RequestMethod.POST)
+    public Result updateRole(@RequestBody RoleVo roleVo) {
+        if (ObjectUtil.isNull(roleVo.getRoleId())) {
+            return Result.fail("角色id不能为空");
+        }
+        return Result.success(roleService.updateRole(roleVo));
+    }
+
+    @ApiOperation(value = "删除角色")
+    @PreAuthorize("hasAuthority('sys:role:del')")
+    @RequestMapping(value = "delRole", method = RequestMethod.POST)
+    public Result delRole(@RequestParam("roleId") Long roleId) {
+        if (ObjectUtil.isNull(roleId)) {
+            return Result.fail("角色id不能为空");
+        }
+        return Result.success(roleService.delRole(roleId));
+    }
+
 
     @ApiOperation(value = "查询角色对应的用户信息")
     @RequestMapping(value = "getRoleByUser/{roleId}", method = RequestMethod.GET)

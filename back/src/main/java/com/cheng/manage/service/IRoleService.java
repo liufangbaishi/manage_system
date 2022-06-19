@@ -49,6 +49,20 @@ public interface IRoleService extends IService<Role> {
     RoleVo getRoleInfo(Long roleId);
 
     /**
+     * 修改角色
+     * @param roleVo
+     * @return
+     */
+    Result updateRole(RoleVo roleVo);
+
+    /**
+     * 删除角色
+     * @param roleId
+     * @return
+     */
+    Result delRole(Long roleId);
+
+    /**
      * 查询拥有该角色的所有用户
      * @param roleId
      * @return

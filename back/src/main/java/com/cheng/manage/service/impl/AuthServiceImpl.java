@@ -1,9 +1,7 @@
 package com.cheng.manage.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -16,7 +14,7 @@ import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.mapper.MenuMapper;
 import com.cheng.manage.mapper.UserMapper;
 import com.cheng.manage.mapper.UserRoleMapper;
-import com.cheng.manage.model.CurrentUser;
+import com.cheng.manage.model.LoginUser;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
@@ -27,7 +25,6 @@ import com.cheng.manage.utils.JwtUtils;
 import com.cheng.manage.utils.SecurityUtils;
 import com.cheng.manage.vo.RouterVo;
 import com.cheng.manage.vo.UserVo;
-import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,11 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -80,42 +73,7 @@ public class AuthServiceImpl implements IAuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    @Override
-    public User getUserByUserName(String userName) {
-        return userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUserName, userName)
-                .eq(User::getDelFlag, 0));
-    }
-
-    @Override
-    public String getAuthority(Long userId) {
-        // 先在redis中查询
-        String userAuthority = (String)redisTemplate.opsForValue().get(AuthConsts.AUTHORITY + userId);
-        if (!StrUtil.isBlankOrUndefined(userAuthority)) {
-            return userAuthority;
-        }
-        String authorites = "";
-        // 查询用户角色
-        List<Role> roles = userRoleMapper.selectUserRoleList(userId);
-        if (CollUtil.isNotEmpty(roles) && roles.size() > 0) {
-            String roleAuthorites = roles.stream().map(e -> AuthConsts.ROLE_PREFIX + e.getRoleKey()).collect(Collectors.joining(","));
-            authorites = roleAuthorites.concat(",");
-        }
-        // 查询用户权限
-        List<Menu> menus = menuMapper.selectUserMenuList(userId);
-        if (CollUtil.isNotEmpty(menus) && menus.size() > 0) {
-            String menuAuthorites = menus.stream().map(Menu::getPerms).collect(Collectors.joining(","));
-            authorites = authorites.concat(menuAuthorites);
-        }
-        // 缓存到redis中，设置过期时间为60*60秒
-        redisTemplate.opsForValue().set(AuthConsts.AUTHORITY+userId, authorites, 60 * 60, TimeUnit.SECONDS);
-        return authorites;
-    }
 
     /**
      * 登录
@@ -139,16 +97,29 @@ public class AuthServiceImpl implements IAuthService {
             log.info("登录异常", e);
             throw new LoginException(e.getMessage());
         }
-        CurrentUser userInfo = (CurrentUser) authentication.getPrincipal();
+        // 获取登录信息
+        LoginUser userInfo = (LoginUser) authentication.getPrincipal();
+
         // 更新最后登录时间,登录地址
+        updateLoginInfo(userInfo, request);
+
+        // 生成token
+        return jwtUtils.generateToken(userInfo);
+    }
+
+    /**
+     * 更新登录信息
+     * @param userInfo
+     * @param request
+     */
+    private void updateLoginInfo(LoginUser userInfo, HttpServletRequest request) {
         User updateUser = new User();
         updateUser.setUserId(userInfo.getUserId());
         updateUser.setLoginIp(IpUtils.getIpAddr(request));
         updateUser.setLoginDate(LocalDateTime.now());
         userMapper.updateById(updateUser);
-        // 生成token
-        return jwtUtils.generateToken(userInfo);
     }
+
     /**
      * 校验验证码
      * @param loginParam
@@ -157,7 +128,7 @@ public class AuthServiceImpl implements IAuthService {
         String code = loginParam.getCode();
         String uuid = loginParam.getUuid();
         if (StrUtil.isEmpty(code) || StrUtil.isEmpty(uuid)) {
-            throw new LoginException("验证码为空");
+            throw new LoginException("验证码不能为空");
         }
         Object redisCode = redisTemplate.opsForValue().get(AuthConsts.CAPTCHA_KEY + uuid);
         if (!code.equals(redisCode)) {
@@ -166,31 +137,56 @@ public class AuthServiceImpl implements IAuthService {
         redisTemplate.delete(AuthConsts.CAPTCHA_KEY+uuid);
     }
 
+
     /**
-     * 生成验证码
+     * 退出登录
+     * @param token
      * @return
      */
     @Override
-    public Result getCaptcha() throws IOException {
-        // 需要生产一个uuid和验证码，一同返回给前端；登录时通过uuid判断验证码
-        String uuid = UUID.randomUUID().toString();
-        // 生成验证码文字
-        String code = producer.createText();
-        log.info("生成的验证码{}", code);
-        // 生成图片验证码转换为Base64
-        BufferedImage imageCode = producer.createImage(code);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(imageCode, "jpg", outputStream);
-        // 写入redis中 120秒
-        redisTemplate.opsForValue().set(AuthConsts.CAPTCHA_KEY+uuid, code, 120, TimeUnit.SECONDS);
-        return Result.success(
-                MapUtil.builder()
-                .put("key", uuid)
-                .put("code", Base64.encode(outputStream.toByteArray()))
-                .build()
-        );
+    public String logout(String token) {
+        redisTemplate.delete(AuthConsts.AUTHORITY +  SecurityUtils.getUserId());
+        SecurityUtils.setCurrentUser(null);
+        return "退出登录成功!";
     }
 
+
+    @Override
+    public User getUserByUserName(String userName) {
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUserName, userName)
+                .eq(User::getDelFlag, 0));
+    }
+
+    @Override
+    public String getAuthority(Long userId) {
+        // 先在redis中查询
+        String userAuthority = (String)redisTemplate.opsForValue().get(AuthConsts.AUTHORITY + userId);
+        if (!StrUtil.isBlankOrUndefined(userAuthority)) {
+            return userAuthority;
+        }
+        String authorites = "";
+        // 查询用户角色
+//        List<Role> roles = userRoleMapper.selectUserRoleList(userId);
+//        if (CollUtil.isNotEmpty(roles)) {
+//            String roleAuthorites = roles.stream().map(e -> AuthConsts.ROLE_PREFIX + e.getRoleKey()).collect(Collectors.joining(","));
+//            authorites = roleAuthorites.concat(",");
+//        }
+        // 查询用户权限
+        List<Menu> menus = menuMapper.selectUserMenuList(userId);
+        if (CollUtil.isNotEmpty(menus) && menus.size() > 0) {
+            String menuAuthorites = menus.stream().map(Menu::getPerms).collect(Collectors.joining(","));
+            authorites = authorites.concat(menuAuthorites);
+        }
+        // 缓存到redis中，设置过期时间为60*60秒
+        redisTemplate.opsForValue().set(AuthConsts.AUTHORITY+userId, authorites, 60 * 60, TimeUnit.SECONDS);
+        return authorites;
+    }
+
+    /**
+     * 查询菜单
+     * @return
+     */
     @Override
     public Result getCurrentNav() {
         User currentUser = SecurityUtils.getCurrentUser();
@@ -267,17 +263,10 @@ public class AuthServiceImpl implements IAuthService {
         UserVo userVo = new UserVo();
         BeanUtil.copyProperties(currentUser, userVo);
         List<Role> roles = userRoleMapper.selectUserRoleList(currentUser.getUserId());
-        if (CollUtil.isNotEmpty(roles) && roles.size() > 0) {
+        if (CollUtil.isNotEmpty(roles)) {
             userVo.setRoles(roles.stream().map(Role::getRoleKey).collect(Collectors.toList()));
             userVo.setRolesName(roles.stream().map(Role::getRoleName).collect(Collectors.toList()));
         }
         return Result.success(userVo);
-    }
-
-    @Override
-    public String logout(String token) {
-        redisTemplate.delete(AuthConsts.AUTHORITY +  SecurityUtils.getUserId());
-        SecurityUtils.setCurrentUser(null);
-        return "退出登录成功!";
     }
 }

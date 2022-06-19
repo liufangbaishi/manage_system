@@ -1,6 +1,7 @@
 package com.cheng.manage.config.security;
 
-import com.cheng.manage.model.CurrentUser;
+import com.cheng.manage.common.enums.DelStausEnum;
+import com.cheng.manage.model.LoginUser;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,15 @@ public class UserDetailsServiceImpl {
             if (user == null) {
                 throw new UsernameNotFoundException("用户名不存在");
             }
-            if ("1".equals(user.getStatus())) {
+            if (DelStausEnum.DISABLED.getCode().equals(user.getStatus())) {
                 throw new InternalAuthenticationServiceException("用户已被禁用");
             }
             // 如果用户存在，查询用户的权限信息
-            return new CurrentUser(user.getUserId(), user.getUserName(), user.getPassword(), getAuthority(user.getUserId()));
+            return new LoginUser(
+                    user.getUserId(),
+                    user.getUserName(),
+                    user.getPassword(),
+                    getAuthority(user.getUserId()));
         };
     }
 

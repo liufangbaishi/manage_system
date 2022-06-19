@@ -18,7 +18,13 @@ public interface UserRoleMapper {
      * 删除用户角色关系
      * @return
      */
-    int deleteUserRole(@Param("userIds") Long[] userIds);
+    int deleteByUser(@Param("userIds") Long[] userIds);
+
+    /**
+     * 删除用户角色关系
+     * @return
+     */
+    int deleteByRole(@Param("roleId") Long roleId);
 
     /**
      * 添加用户角色关系

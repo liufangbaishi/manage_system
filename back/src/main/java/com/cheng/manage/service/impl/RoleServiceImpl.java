@@ -1,20 +1,24 @@
 package com.cheng.manage.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.enums.DelStausEnum;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.mapper.MenuMapper;
 import com.cheng.manage.mapper.RoleMapper;
+import com.cheng.manage.mapper.RoleMenuMapper;
 import com.cheng.manage.mapper.UserRoleMapper;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IRoleService;
 import com.cheng.manage.utils.BuildTree;
+import com.cheng.manage.utils.SecurityUtils;
 import com.cheng.manage.vo.RoleVo;
 import com.cheng.manage.vo.TableList;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,6 +50,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private RoleMenuMapper roleMenuMapper;
 
     /**
      * 查询所有角色 分页
@@ -90,13 +97,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         if (!Objects.isNull(checkRole)) {
             return Result.fail("角色已存在");
         }
-        role.setCreateBy("admin");
+        role.setCreateBy(SecurityUtils.getUserName());
         role.setCreateTime(LocalDateTime.now());
-        role.setUpdateBy("admin");
+        role.setUpdateBy(SecurityUtils.getUserName());
         role.setUpdateTime(LocalDateTime.now());
         roleMapper.insert(role);
 
-        return Result.success("新增角色成功");
+        return Result.success();
     }
 
     /**
@@ -120,6 +127,51 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         BeanUtils.copyProperties(roleById, resultRole);
         resultRole.setMenuList(treeMenus);
         return resultRole;
+    }
+
+    @Override
+    public Result updateRole(RoleVo roleVo) {
+        // 判断重复
+        Role checkRole = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
+                .eq(Role::getRoleName, roleVo.getRoleName()));
+        if (!Objects.isNull(checkRole) && !roleVo.getRoleName().equals(checkRole.getRoleName())) {
+            return Result.fail("角色名称不能重复");
+        }
+        Role updateRole = new Role();
+        BeanUtils.copyProperties(roleVo, updateRole);
+        updateRole.setUpdateBy(SecurityUtils.getUserName());
+        updateRole.setUpdateTime(LocalDateTime.now());
+        roleMapper.updateById(updateRole);
+        // 修改角色权限部分
+        roleMenuMapper.deleteByRole(roleVo.getRoleId());
+        List<Long> menuList = roleVo.getMenuList().stream().map(Menu::getMenuId).collect(Collectors.toList());
+        roleMenuMapper.addRoleMenu(roleVo.getRoleId(), menuList);
+        return Result.success();
+    }
+
+    /**
+     * 删除角色
+     * @param roleId
+     * @return
+     */
+    @Override
+    public Result delRole(Long roleId) {
+        List<User> userList = userRoleMapper.selectUserByRoleId(roleId);
+        if (CollUtil.isNotEmpty(userList)) {
+            return Result.fail("删除失败，角色正在被使用");
+        }
+        // 删除角色表 逻辑删除
+        Role delRole = new Role();
+        delRole.setRoleId(roleId);
+        delRole.setDelFlag(DelStausEnum.DEL.getCode());
+        delRole.setUpdateBy(SecurityUtils.getUserName());
+        delRole.setUpdateTime(LocalDateTime.now());
+        roleMapper.updateById(delRole);
+        // 删除角色用户关系表的数据
+        userRoleMapper.deleteByRole(roleId);
+        // 删除角色权限关系的数据
+        roleMenuMapper.deleteByRole(roleId);
+        return Result.success();
     }
 
     /**

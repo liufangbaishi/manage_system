@@ -2,10 +2,6 @@ package com.cheng.manage.mapper;
 
 import com.cheng.manage.model.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cheng.manage.model.User;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * <p>

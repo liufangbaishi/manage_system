@@ -29,11 +29,15 @@
         </foreach>
     </insert>
 
-    <delete id="deleteUserRole">
+    <delete id="deleteByUser">
         delete from sys_user_role where user_id in
         <foreach collection="userIds" item="userId" open="(" separator="," close=")">
             #{userId}
         </foreach>
+    </delete>
+
+    <delete id="deleteByRole">
+        delete from sys_user_role where role_id = #{roleId}
     </delete>
 
     <select id="selectUserByRoleId" resultType="com.cheng.manage.model.User">

@@ -1,10 +1,10 @@
-package com.cheng.manage.config.security;
+package com.cheng.manage.config.security.response;
 
 import cn.hutool.json.JSONUtil;
 import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.common.consts.ResultCode;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -15,23 +15,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 未登录异常返回
+ * 权限不足异常返回
  * @author weicheng
  * @version v1.0.0
  * @description
- * @name AuthenticationEntryPointImpl
- * @date 2021/12/2 00:01
+ * @name AccessDeniedHandlerImpl
+ * @date 2021/12/2 00:04
  */
 @Component
-public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
+public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
-    public void commence(HttpServletRequest httpServletRequest,
-                         HttpServletResponse httpServletResponse,
-                         AuthenticationException e) throws IOException, ServletException {
+    public void handle(HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse,
+                       AccessDeniedException e) throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset:UTF-8");
-        // 返回登录提示
+        // 返回权限不足的提示
         ServletOutputStream outputStream = httpServletResponse.getOutputStream();
-        Result authenticationResult = Result.fail(ResultCode.TOKEN_EXPIRE, "token过期，请重新登录");
+        Result authenticationResult = Result.fail(ResultCode.TOKEN_DENIED, "权限不足，请联系管理员");
         byte[] byteResult = JSONUtil.toJsonStr(authenticationResult).getBytes(StandardCharsets.UTF_8);
         outputStream.write(byteResult);
         // 关闭流 收尾

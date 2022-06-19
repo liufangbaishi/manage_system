@@ -1,4 +1,4 @@
-package com.cheng.manage.config.security;
+package com.cheng.manage.config.security.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.cheng.manage.model.User;
@@ -43,19 +43,23 @@ public class JwtAuthencationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         // 从请求头中获取token
         String authToken = jwtUtils.getToken(httpServletRequest);
+
         if (StrUtil.isNotEmpty(authToken)) {
             // 从token中获取用户名
             String currentUserName = jwtUtils.getCurrentUserName(authToken);
+
             if (StrUtil.isNotEmpty(currentUserName)
                     && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // 获取用户信息设置到上下文中
                 User currentUser = authService.getUserByUserName(currentUserName);
                 String authority = authService.getAuthority(currentUser.getUserId());
+
                 // 校验jwt是否有效
                 if (jwtUtils.validateToken(authToken)) {
                     SecurityUtils.setCurrentUser(new UsernamePasswordAuthenticationToken(currentUser,
                             null, AuthorityUtils.commaSeparatedStringToAuthorityList(authority)));
                 }
+
             }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
