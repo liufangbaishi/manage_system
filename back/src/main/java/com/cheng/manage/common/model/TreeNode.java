@@ -1,4 +1,4 @@
-package com.cheng.manage.common.consts;
+package com.cheng.manage.common.model;
 
 import java.util.List;
 

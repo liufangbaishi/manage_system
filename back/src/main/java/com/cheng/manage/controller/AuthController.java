@@ -2,7 +2,7 @@ package com.cheng.manage.controller;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.dto.LoginParam;
 import com.cheng.manage.service.IAuthService;
 import io.swagger.annotations.ApiOperation;

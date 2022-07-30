@@ -16,6 +16,16 @@ import java.util.List;
 
 /**
  * 接口文档地址：http://localhost:8080/doc.html
+ *         <dependency>
+ *             <groupId>io.springfox</groupId>
+ *             <artifactId>springfox-swagger2</artifactId>
+ *             <version>2.9.2</version>
+ *         </dependency>
+ *         <dependency>
+ *             <groupId>com.github.xiaoymin</groupId>
+ *             <artifactId>swagger-bootstrap-ui</artifactId>
+ *             <version>1.9.6</version>
+ *         </dependency>
  * @author weicheng
  * @version v1.0.0
  * @description

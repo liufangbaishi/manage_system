@@ -2,7 +2,7 @@ package com.cheng.manage.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.Role;
 import com.cheng.manage.model.User;

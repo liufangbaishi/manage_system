@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.mapper.MenuMapper;
 import com.cheng.manage.mapper.RoleMenuMapper;
 import com.cheng.manage.model.Menu;

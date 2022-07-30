@@ -2,7 +2,7 @@ package com.cheng.manage.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.model.Menu;
 import com.cheng.manage.service.IMenuService;
 import io.swagger.annotations.ApiOperation;

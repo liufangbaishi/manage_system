@@ -7,7 +7,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cheng.manage.common.consts.AuthConsts;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.enums.MenuHideStatusEnum;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.common.consts.ResultCode;
 import com.cheng.manage.common.exception.LoginException;
 import com.cheng.manage.dto.LoginParam;
@@ -212,7 +213,8 @@ public class AuthServiceImpl implements IAuthService {
         for (Menu menu : menus) {
             RouterVo routerVo = new RouterVo();
             routerVo.setMenuId(menu.getMenuId());
-            routerVo.setHidden("1".equals(menu.getVisible())); // 1 为隐藏 hidden为true
+            routerVo.setHidden(MenuHideStatusEnum.HIDE.getCode().equals(menu.getVisible())); // 1 为隐藏 hidden为true
+            // 首字母大写
             String routerName = menu.getPath().substring(0, 1).toUpperCase() + menu.getPath().substring(1);
             routerVo.setName(routerName);
             routerVo.setPath(getPath(menu));
@@ -238,6 +240,7 @@ public class AuthServiceImpl implements IAuthService {
         String component = menu.getComponent();
         // M目录 C菜单
         if (StrUtil.isEmpty(component) && "M".equals(menu.getMenuType())) {
+            // componet 前端对应组件 一级目录Layout 二级目录ParentView
             component = menu.getParentId() == 0 ? "Layout" : "ParentView";
         }
         return component;

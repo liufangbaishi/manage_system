@@ -1,5 +1,6 @@
-package com.cheng.manage.common.consts;
+package com.cheng.manage.common.model;
 
+import com.cheng.manage.common.consts.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

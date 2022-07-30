@@ -1,7 +1,7 @@
 package com.cheng.manage.config.security.response;
 
 import cn.hutool.json.JSONUtil;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.common.consts.ResultCode;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

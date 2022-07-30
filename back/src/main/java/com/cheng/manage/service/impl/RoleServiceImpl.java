@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.common.enums.DelStausEnum;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.mapper.MenuMapper;
@@ -75,7 +75,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public List<Role> getAllRoleList(Role role) {
         return new LambdaQueryChainWrapper<>(roleMapper)
-                .eq(Role::getDelFlag, 0)
+                .eq(Role::getDelFlag, DelStausEnum.NORMAL.getCode())
                 .eq(StrUtil.isNotBlank(role.getRoleKey()), Role::getRoleKey, role.getRoleKey())
                 .eq(StrUtil.isNotBlank(role.getRoleName()), Role::getRoleName, role.getRoleName())
                 .orderByAsc(Role::getRoleSort)
@@ -142,6 +142,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         updateRole.setUpdateBy(SecurityUtils.getUserName());
         updateRole.setUpdateTime(LocalDateTime.now());
         roleMapper.updateById(updateRole);
+
         // 修改角色权限部分
         roleMenuMapper.deleteByRole(roleVo.getRoleId());
         List<Long> menuList = roleVo.getMenuList().stream().map(Menu::getMenuId).collect(Collectors.toList());

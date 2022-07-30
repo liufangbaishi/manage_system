@@ -5,20 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 删除状态
+ * 菜单是否隐藏
  * @author weicheng
  * @version v1.0.0
  * @description
- * @name DelStausEnum
- * @date 2022/5/29 15:44
+ * @name MenuStautsEnum
+ * @date 2022/7/30 19:08
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum DelStausEnum {
-    DEL("2", "删除"),
-    DISABLED("1", "禁用/停用"),
-    NORMAL("0", "正常");
+public enum MenuHideStatusEnum {
+    HIDE("1", "隐藏"),
+    DISPLAY("0", "显示");
 
     private String code;
 

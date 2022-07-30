@@ -4,7 +4,7 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.map.MapUtil;
 import com.cheng.manage.common.consts.AuthConsts;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

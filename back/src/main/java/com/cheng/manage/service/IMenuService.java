@@ -1,7 +1,7 @@
 package com.cheng.manage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.model.Menu;
 
 import java.util.List;

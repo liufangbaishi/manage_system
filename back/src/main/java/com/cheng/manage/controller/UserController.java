@@ -5,7 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.User;
 import com.cheng.manage.service.IUserService;
@@ -130,8 +130,7 @@ public class UserController {
         if (ObjectUtil.isNull(userId) || CollUtil.isEmpty(roleIds)) {
             return Result.fail("参数不能为空");
         }
-        userService.setUserRole(userId, roleIds);
-        return Result.success();
+        return userService.setUserRole(userId, roleIds);
     }
 
     @ApiOperation(value = "修改个人信息")

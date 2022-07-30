@@ -60,10 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * swagger相关的请求不拦截
      * @param web
-     * @throws Exception
      */
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/doc.html", "/webjars/**", "/swagger-resources/**", "/v2/api-docs/**");
     }
 

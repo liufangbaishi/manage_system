@@ -4,8 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cheng.manage.common.consts.Result;
 import com.cheng.manage.common.enums.DelStausEnum;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.mapper.UserMapper;
 import com.cheng.manage.mapper.UserRoleMapper;
@@ -111,12 +111,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public void setUserRole(Long userId, List<Long> roleIds) {
+    public Result setUserRole(Long userId, List<Long> roleIds) {
+        // 判断角色是否停用
+        List<Role> roleList = roleService.getBaseMapper().selectBatchIds(roleIds);
+        boolean match = roleList.stream().anyMatch(role -> DelStausEnum.DISABLED.getCode().equals(role.getStatus()));
+        if (match) {
+            return Result.fail("角色已停用");
+        }
+
         // 删除原先的用户角色关系
         Long[] users = new Long[]{userId};
         userRoleMapper.deleteByUser(users);
         // 重新添加用户角色关系
         userRoleMapper.addUserRole(userId, roleIds);
+        return Result.success();
     }
 
     @Override

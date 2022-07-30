@@ -1,7 +1,7 @@
 package com.cheng.manage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cheng.manage.common.consts.Result;
+import com.cheng.manage.common.model.Result;
 import com.cheng.manage.dto.PageParam;
 import com.cheng.manage.model.User;
 import com.cheng.manage.vo.TableList;
@@ -45,7 +45,7 @@ public interface IUserService extends IService<User> {
      * @param roleIds
      * @return
      */
-    void setUserRole(Long userId, List<Long> roleIds);
+    Result setUserRole(Long userId, List<Long> roleIds);
 
     /**
      * 修改密码
