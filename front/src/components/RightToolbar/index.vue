@@ -11,7 +11,7 @@
         <el-button size="mini" circle icon="el-icon-menu" @click="showColumn()" />
       </el-tooltip>
     </el-row>
-    <el-dialog :title="title" :visible.sync="open" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" append-to-body width="600px">
       <el-transfer
         v-model="value"
         style="text-align: left; display: inline-block"
@@ -80,10 +80,13 @@ export default {
   border-radius: 50%;
   padding: 12px;
   display: block;
-  margin-left: 0px;
+  margin-left: 0;
 }
 ::v-deep .el-transfer__button:first-child {
   margin-bottom: 10px;
+}
+::v-deep .el-dialog__body {
+  text-align: center;
 }
 .top-right-btn {
   position: relative;

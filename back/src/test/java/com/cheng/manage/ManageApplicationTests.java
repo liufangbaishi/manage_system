@@ -14,11 +14,12 @@ class ManageApplicationTests {
 
     @Test
     public void testRest() {
-        String str = "地震发生时";
+        String str = "中国探月工程";
         ResponseEntity<String> entity = restTemplate.getForEntity("http://www.syiban.com/search/index/init.html?modelid=1&q=" + str, String.class);
         int statusCodeValue = entity.getStatusCodeValue();
         System.out.println(statusCodeValue);
         String entityBody = entity.getBody();
+        System.out.println(entityBody);
 
         if (entityBody != null) {
             int startIndex = entityBody.indexOf("<div class=\"yzm-news-right\">");

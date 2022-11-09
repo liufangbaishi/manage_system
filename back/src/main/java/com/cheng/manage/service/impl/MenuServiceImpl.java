@@ -49,8 +49,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
                 .eq(StrUtil.isNotBlank(queryMenu.getMenuType()), Menu::getMenuType, queryMenu.getMenuType())
                 .orderByAsc(Menu::getOrderNum)
                 .list();
-        // 转换为树形结构
-        return BuildTree.buildTree(menuList);
+        if (StrUtil.isBlank(queryMenu.getMenuName())) {
+            // 转换为树形结构
+            return BuildTree.buildTree(menuList);
+        }
+        return menuList;
     }
 
     @Override

@@ -415,13 +415,13 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
-        userName: undefined,
-        nickName: undefined,
-        phoneNumber: undefined,
-        email: undefined,
-        sex: undefined,
+        userName: '',
+        nickName: '',
+        phoneNumber: '',
+        email: '',
+        sex: '',
         status: '0',
-        remark: undefined
+        remark: ''
       }
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
@@ -464,7 +464,6 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
       const userId = row.userId || this.ids
       getUser(userId).then(response => {
         this.form = response.data
@@ -523,6 +522,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      // TODO:
       this.download('system/user/export', {
         ...this.queryParams
       }, `user_${new Date().getTime()}.xlsx`)
@@ -534,6 +534,7 @@ export default {
     },
     /** 下载模板操作 */
     importTemplate() {
+      // TODO:
       this.download('system/user/importTemplate', {
       }, `user_template_${new Date().getTime()}.xlsx`)
     },

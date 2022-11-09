@@ -61,6 +61,7 @@ public class KaptchaController {
             );
         } catch (Exception e) {
             result = Result.fail("生成验证码失败");
+            log.error("验证码生成失败", e);
         }
         return result;
     }

@@ -63,6 +63,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           updateUserProfile(this.user).then(response => {
+            this.$emit('getUser')
             this.$modal.msgSuccess('修改成功')
           })
         }
